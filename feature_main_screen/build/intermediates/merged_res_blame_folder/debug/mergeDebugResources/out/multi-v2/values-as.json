@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.android.sportsBookApp.feature_main_screen-mergeDebugResources-63:/values-as/values-as.xml",
+            "outputFile": "com.android.sportsBookApp.feature_main_screen-debug-70:/values-as/values-as.xml",
             "map": [
                 {
                     "source": "/Users/coo/.gradle/caches/8.11.1/transforms/8093f40630840064e6a6058c251d1770/transformed/material3-release/res/values-as/values-as.xml",
@@ -74,7 +74,7 @@
             ]
         },
         {
-            "outputFile": "com.android.sportsBookApp.feature_main_screen-debug-65:/values-as/values-as.xml",
+            "outputFile": "com.android.sportsBookApp.feature_main_screen-mergeDebugResources-68:/values-as/values-as.xml",
             "map": [
                 {
                     "source": "/Users/coo/.gradle/caches/8.11.1/transforms/8093f40630840064e6a6058c251d1770/transformed/material3-release/res/values-as/values-as.xml",

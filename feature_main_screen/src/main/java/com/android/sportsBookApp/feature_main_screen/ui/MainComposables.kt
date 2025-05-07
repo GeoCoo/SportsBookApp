@@ -41,7 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sportsBookApp.core_model.EventDomain
-import com.android.sportsBookApp.core_model.mockEvents
+import com.android.sportsBookApp.core_model.SportsEventsDomain
+import com.android.sportsBookApp.core_model.provideMockEvents
+import com.android.sportsBookApp.core_model.proviedMockSports
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
@@ -75,7 +77,6 @@ fun MatchCard(
         ) {
             Box(
                 modifier = Modifier
-                    .border(1.dp, Color.Cyan, shape = RoundedCornerShape(4.dp))
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(
@@ -94,7 +95,7 @@ fun MatchCard(
             )
 
             Text(
-                text = event.competitors.first,
+                text = event.competitors?.first ?:"",
                 color = Color.White,
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -106,7 +107,7 @@ fun MatchCard(
             )
 
             Text(
-                text = event.competitors.second,
+                text = event.competitors?.second ?: "",
                 color = Color.White,
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -124,7 +125,7 @@ private fun formatTime(seconds: Long): String {
 
 @Composable
 fun SportHeader(
-    title: String = "SPORT",
+    title: String,
     isFavorite: Boolean = false,
     onFavoriteChanged: (Boolean) -> Unit = {},
     onExpandClick: () -> Unit = {}
@@ -197,20 +198,36 @@ fun SportCompetitions(competitions: List<EventDomain>){
     }
 }
 
+@Composable
+fun MainScreenListItem(sport:SportsEventsDomain){
+    Column {
+        SportHeader(sport.sportName ?: "")
+        SportCompetitions(competitions = sport.activeEvents)
+
+    }
+}
+
+@Preview
+@Composable
+fun MainScreenListPreview(){
+    MainScreenListItem(sport = proviedMockSports()[0])
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun SportCompetitionsPreview() {
-    SportCompetitions(competitions = mockEvents)
+    SportCompetitions(competitions = provideMockEvents())
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SportHeaderPreview() {
-    SportHeader()
+    SportHeader("Sport")
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
 @Composable
 fun MatchCardPreview() {
-    MatchCard(mockEvents[0])
+    MatchCard(provideMockEvents()[0])
 }

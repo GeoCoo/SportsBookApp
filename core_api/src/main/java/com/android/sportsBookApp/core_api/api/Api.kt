@@ -5,17 +5,19 @@ import retrofit2.Response
 import retrofit2.http.GET
 import javax.inject.Inject
 
-interface ApiService {
 
-    @GET("bets")
-    suspend fun retrieveBets(): Response<SportsEventsDto>
+const val baseUrl = "https://ios-kaizen.github.io/"
+
+interface ApiService {
+    @GET("MockSports/sports.json")
+    suspend fun retrieveSports(): Response<List<SportsEventsDto>>
 }
 
-
 interface ApiClient {
-    suspend fun retrieveBets():Response<SportsEventsDto>
+    suspend fun retrieveSports(): Response<List<SportsEventsDto>>
 }
 
 class ApiClientImpl @Inject constructor(private val apiService: ApiService) : ApiClient {
-    override suspend fun retrieveBets(): Response<SportsEventsDto> = apiService.retrieveBets()
+    override suspend fun retrieveSports(): Response<List<SportsEventsDto>> =
+        apiService.retrieveSports()
 }

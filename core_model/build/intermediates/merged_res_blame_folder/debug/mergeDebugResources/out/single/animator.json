@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.android.sportsBookApp.core_model-debug-64:/animator/fragment_close_exit.xml",
+        "source": "com.android.sportsBookApp.core_model-fragment-1.5.1-45:/animator/fragment_close_exit.xml"
+    },
+    {
+        "merged": "com.android.sportsBookApp.core_model-debug-64:/animator/fragment_fade_exit.xml",
+        "source": "com.android.sportsBookApp.core_model-fragment-1.5.1-45:/animator/fragment_fade_exit.xml"
+    },
+    {
+        "merged": "com.android.sportsBookApp.core_model-debug-64:/animator/fragment_fade_enter.xml",
+        "source": "com.android.sportsBookApp.core_model-fragment-1.5.1-45:/animator/fragment_fade_enter.xml"
+    },
+    {
+        "merged": "com.android.sportsBookApp.core_model-debug-64:/animator/fragment_close_enter.xml",
+        "source": "com.android.sportsBookApp.core_model-fragment-1.5.1-45:/animator/fragment_close_enter.xml"
+    },
+    {
+        "merged": "com.android.sportsBookApp.core_model-debug-64:/animator/fragment_open_enter.xml",
+        "source": "com.android.sportsBookApp.core_model-fragment-1.5.1-45:/animator/fragment_open_enter.xml"
+    },
+    {
+        "merged": "com.android.sportsBookApp.core_model-debug-64:/animator/fragment_open_exit.xml",
+        "source": "com.android.sportsBookApp.core_model-fragment-1.5.1-45:/animator/fragment_open_exit.xml"
+    }
+]

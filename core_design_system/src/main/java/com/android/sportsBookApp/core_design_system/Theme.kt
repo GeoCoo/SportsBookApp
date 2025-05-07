@@ -13,10 +13,10 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun SportsBookAppTheme(
-    darkTheme: Boolean = false /*isSystemInDarkTheme()*/,
+    darkTheme: Boolean = true /*isSystemInDarkTheme()*/,
     content: @Composable () -> Unit
 ) {
-    val useDynamicColors = false//Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val useDynamicColors = false
     val colors = when {
         useDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
         useDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)

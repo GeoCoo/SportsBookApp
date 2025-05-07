@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.BettsonTheme" parent="android:Theme.Translucent.NoTitleBar">
+    <style name="Theme.SportsBookApp" parent="android:Theme.Translucent.NoTitleBar">
 
     </style>
 </resources>

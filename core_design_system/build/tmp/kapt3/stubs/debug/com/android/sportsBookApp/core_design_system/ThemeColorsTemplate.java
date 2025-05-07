@@ -8,6 +8,27 @@ public final class ThemeColorsTemplate {
     @org.jetbrains.annotations.NotNull()
     private final androidx.compose.material3.ColorScheme dark = null;
     
+    public ThemeColorsTemplate(boolean darkTheme, @org.jetbrains.annotations.NotNull()
+    androidx.compose.material3.ColorScheme light, @org.jetbrains.annotations.NotNull()
+    androidx.compose.material3.ColorScheme dark) {
+        super();
+    }
+    
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.compose.material3.ColorScheme getLight() {
+        return null;
+    }
+    
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.compose.material3.ColorScheme getDark() {
+        return null;
+    }
+    
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.compose.material3.ColorScheme getColors() {
+        return null;
+    }
+    
     private final boolean component1() {
         return false;
     }
@@ -43,27 +64,6 @@ public final class ThemeColorsTemplate {
     @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
-        return null;
-    }
-    
-    public ThemeColorsTemplate(boolean darkTheme, @org.jetbrains.annotations.NotNull()
-    androidx.compose.material3.ColorScheme light, @org.jetbrains.annotations.NotNull()
-    androidx.compose.material3.ColorScheme dark) {
-        super();
-    }
-    
-    @org.jetbrains.annotations.NotNull()
-    public final androidx.compose.material3.ColorScheme getLight() {
-        return null;
-    }
-    
-    @org.jetbrains.annotations.NotNull()
-    public final androidx.compose.material3.ColorScheme getDark() {
-        return null;
-    }
-    
-    @org.jetbrains.annotations.NotNull()
-    public final androidx.compose.material3.ColorScheme getColors() {
         return null;
     }
 }

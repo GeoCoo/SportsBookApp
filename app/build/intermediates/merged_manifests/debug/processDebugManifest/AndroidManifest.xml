@@ -8,6 +8,7 @@
         android:minSdkVersion="25"
         android:targetSdkVersion="34" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -20,7 +21,7 @@
     <uses-permission android:name="com.android.sportsBookApp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
-        android:name="com.android.sportsBookApp.Application"
+        android:name="com.android.sportsbookapp.SportsBookApplication"
         android:allowBackup="false"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
@@ -33,7 +34,7 @@
         android:testOnly="true"
         android:theme="@style/Theme.SportsBookApp" >
         <activity
-            android:name="com.android.sportsBookApp.MainActivity"
+            android:name="com.android.sportsbookapp.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:launchMode="singleTask"
@@ -161,8 +162,7 @@
 
         <activity
             android:name="androidx.activity.ComponentActivity"
-            android:exported="true"
-            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+            android:exported="true" />
 
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"

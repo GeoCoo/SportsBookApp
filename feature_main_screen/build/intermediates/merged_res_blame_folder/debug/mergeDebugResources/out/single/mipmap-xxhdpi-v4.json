@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.android.sportsBookApp.feature_main_screen-debug-70:/mipmap-xxhdpi-v4/ic_launcher.webp",
+        "source": "com.android.sportsBookApp.feature_main_screen-debug-65:/mipmap-xxhdpi-v4/ic_launcher.webp"
+    },
+    {
+        "merged": "com.android.sportsBookApp.feature_main_screen-debug-70:/mipmap-xxhdpi-v4/ic_launcher_round.webp",
+        "source": "com.android.sportsBookApp.feature_main_screen-debug-65:/mipmap-xxhdpi-v4/ic_launcher_round.webp"
+    }
+]

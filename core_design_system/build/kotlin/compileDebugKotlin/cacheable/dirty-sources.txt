@@ -1,2 +1,0 @@
-/Users/coo/Desktop/Studio/sportsBookApp/core_design_system/src/main/java/com/android/sportsBookApp/core_design_system/Theme.kt
-/Users/coo/Desktop/Studio/sportsBookApp/core_design_system/src/main/java/com/android/sportsBookApp/core_design_system/Color.kt

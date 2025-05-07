@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">core_design_system</string>
+    <style name="Theme.SportsBookApp" parent="android:Theme.Translucent.NoTitleBar">
+
+    </style>
+</resources>

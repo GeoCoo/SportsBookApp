@@ -1,0 +1,12 @@
+dependencies {
+//     Application Modules
+    implementation project(":core_api")
+    implementation project(":core_data")
+    implementation project(":core_design_system")
+    implementation project(":core_domain")
+    implementation project(":core_model")
+    implementation project(":core_resources")
+    implementation project(":core_ui")
+    implementation project(":feature_main_screen")
+
+}

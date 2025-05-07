@@ -1,0 +1,7 @@
+com.android.sportsBookApp.core_resources
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+string app_name
+style Theme_BettsonTheme
+xml backup_rules
+xml data_extraction_rules

@@ -1,0 +1,10 @@
+apply from: "$rootProject.projectDir/common/library-module.gradle"
+apply from: "$rootProject.projectDir/common/dependencies.gradle"
+android {
+    namespace 'com.android.sportsBookApp.feature_main_screen'
+}
+
+dependencies {
+    implementation project(":core_ui")
+    implementation project(":core_model")
+}

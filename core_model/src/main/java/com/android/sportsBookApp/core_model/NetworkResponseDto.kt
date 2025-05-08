@@ -17,15 +17,13 @@ data class EventDto(
 )
 
 
-
-
-
 fun String?.splitToPairByDash(): Pair<String, String>? {
-    val parts = this?.split("-") ?: return null
+    if (this.isNullOrEmpty()) return null
+
+    val parts = this.split("-")
     return if (parts.size == 2) {
-        parts[0] to parts[1]
+        parts[0].trim() to parts[1].trim()
     } else {
         null
     }
 }
-

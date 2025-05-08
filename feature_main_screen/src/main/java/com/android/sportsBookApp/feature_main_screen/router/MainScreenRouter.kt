@@ -6,9 +6,16 @@ import com.android.sportsBookApp.feature_main_screen.ui.MainScreen
 
 
 const val mainRoute = "main"
+const val infoRoute = "info"
 
 fun NavGraphBuilder.mainScreen() {
     composable(mainRoute) {
+        MainScreen()
+    }
+}
+
+fun NavGraphBuilder.infoScreen() {
+    composable(infoRoute) {
         MainScreen()
     }
 }

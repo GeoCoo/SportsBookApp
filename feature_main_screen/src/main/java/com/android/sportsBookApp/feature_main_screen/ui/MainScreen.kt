@@ -13,12 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.android.sportsBookApp.core_resources.R
 import com.android.sportsBookApp.core_ui.component.LifecycleEffect
 
@@ -29,10 +31,18 @@ import com.android.sportsBookApp.core_ui.component.LifecycleEffect
 fun MainScreen() {
     val viewModel = hiltViewModel<MainViewModel>()
     val state = viewModel.viewState
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     LifecycleEffect(
-        lifecycleOwner = LocalLifecycleOwner.current, lifecycleEvent = Lifecycle.Event.ON_RESUME
+        lifecycleOwner = lifecycleOwner, lifecycleEvent = Lifecycle.Event.ON_CREATE
     ) {
-        viewModel.setEvent(Event.GetSports)
+        viewModel.setEvent(Event.GetSavedFavorites)
+    }
+
+    LifecycleEffect(
+        lifecycleOwner = lifecycleOwner, lifecycleEvent = Lifecycle.Event.ON_RESUME
+    ) {
+        viewModel.setEvent(Event.GetSportsData)
     }
 
     Scaffold(topBar = {
@@ -52,11 +62,23 @@ fun MainScreen() {
                 items(sports.size) { index ->
                     MainScreenListItem(sports[index], expandSportCompetitions = {
                         viewModel.setEvent(Event.ExpandSportCompetitions(sports[index]))
+                    },toggleFavoriteEvent = { eventId,isFavorite ->
+                        val favEvent = Pair(eventId,isFavorite)
+                        viewModel.setEvent(Event.ToggleFavoriteEvent(sports[index],favEvent))
                     })
 
                 }
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .collect { effect ->
+                when (effect) {
+                    Effect.GetSavedFavorites -> {viewModel.setEvent(Event.GetSavedFavorites)}
+                }
+            }
     }
 
 }

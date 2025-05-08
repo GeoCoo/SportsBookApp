@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,21 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,85 +36,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.sportsBookApp.core_model.EventDomain
-import com.android.sportsBookApp.core_model.SportsEventsDomain
-import com.android.sportsBookApp.core_model.provideMockEvents
-import com.android.sportsBookApp.core_model.proviedMockSports
-import kotlinx.coroutines.delay
-import java.util.concurrent.TimeUnit
+import com.android.sportsBookApp.core_domain.model.EventDomain
+import com.android.sportsBookApp.core_domain.model.SportsEventsDomain
+import com.android.sportsBookApp.core_domain.model.provideMockEvents
+import com.android.sportsBookApp.core_domain.model.proviedMockSports
+import com.android.sportsBookApp.core_ui.component.CompetitorsView
+import com.android.sportsBookApp.core_ui.component.CountdownTimer
+import com.android.sportsBookApp.core_ui.component.FavoriteIcon
 
 
 @Composable
-fun MatchCard(
-    event: EventDomain // 1 hour countdown by default
-) {
-    var timeLeft by remember { mutableStateOf(event.eventStartTime) }
-
-    // Countdown effect
-    LaunchedEffect(Unit) {
-        while (timeLeft > 0) {
-            delay(1000)
-            timeLeft -= 1
-        }
-    }
-
-    val formattedTime = formatTime(timeLeft.toLong())
-
+fun MatchCard(competition: EventDomain, toggleFavoriteEvent: (String, Boolean) -> Unit) {
     Column(
+        modifier = Modifier
+            .width(LocalConfiguration.current.screenWidthDp.dp / 2 - 16.dp)
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(16.dp)
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 10.dp, vertical = 4.dp)
-        ) {
-            Text(
-                text = formattedTime,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
 
-        Icon(
-            imageVector = Icons.Default.Star,
-            contentDescription = "Favorite",
-            tint = Color.LightGray,
-            modifier = Modifier.size(24.dp)
-        )
-
-        Text(
-            text = event.competitors?.first ?: "",
-            color = Color.White,
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        Text(
-            text = "vs",
-            color = Color.Red,
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        Text(
-            text = event.competitors?.second ?: "",
-            color = Color.White,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        CountdownTimer(competition.eventStartTime)
+        FavoriteIcon(competition.isFavorite, competition.eventId, toggleFavoriteEvent)
+        CompetitorsView(competition.competitors)
     }
 }
 
-// Format seconds to HH:mm:ss
-private fun formatTime(seconds: Long): String {
-    val h = TimeUnit.SECONDS.toHours(seconds)
-    val m = TimeUnit.SECONDS.toMinutes(seconds) % 60
-    val s = seconds % 60
-    return String.format("%02d:%02d:%02d", h, m, s)
-}
 
 @Composable
 fun SportHeader(
@@ -187,14 +132,20 @@ fun SportHeader(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SportCompetitions(competitions: List<EventDomain>) {
+fun SportCompetitions(
+    competitions: List<EventDomain>,
+    toggleFavoriteEvent: (String, Boolean) -> Unit
+) {
+
     FlowRow(
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
+            .padding(12.dp),
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.Start
     ) {
-        competitions.forEach { comppetition ->
-            MatchCard(comppetition)
+        competitions.forEach { competition ->
+            MatchCard(competition, toggleFavoriteEvent)
         }
     }
 }
@@ -202,7 +153,8 @@ fun SportCompetitions(competitions: List<EventDomain>) {
 @Composable
 fun MainScreenListItem(
     sport: SportsEventsDomain,
-    expandSportCompetitions: (Boolean) -> Unit
+    expandSportCompetitions: (Boolean) -> Unit,
+    toggleFavoriteEvent: (String, Boolean) -> Unit
 ) {
     Column {
         SportHeader(
@@ -211,27 +163,34 @@ fun MainScreenListItem(
             isExpanded = sport.isExpanded,
             onExpandClick = expandSportCompetitions
         )
-            AnimatedVisibility(
-                visible = sport.isExpanded,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                SportCompetitions(competitions = sport.activeEvents)
-            }
+        AnimatedVisibility(
+            visible = sport.isExpanded,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            SportCompetitions(competitions = sport.activeEvents, toggleFavoriteEvent)
+        }
     }
 }
 
 @Preview
 @Composable
 fun MainScreenListPreview() {
-    MainScreenListItem(sport = proviedMockSports()[0], {})
+    MainScreenListItem(sport = proviedMockSports()[0], {}, { _,_ -> }
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
+@Composable
+fun MatchCardPreview() {
+    MatchCard(provideMockEvents()[0], {_,_->})
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
 @Composable
 fun SportCompetitionsPreview() {
-    SportCompetitions(competitions = provideMockEvents())
+    SportCompetitions(competitions = provideMockEvents(), { _, _ -> })
 }
 
 @Preview(showBackground = true)
@@ -246,8 +205,16 @@ fun SportHeaderNotExpandedPreview() {
     SportHeader("Sport", isExpanded = false, onExpandClick = {})
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
+@Preview(showBackground = true)
 @Composable
-fun MatchCardPreview() {
-    MatchCard(provideMockEvents()[0])
+fun SportHeaderHasFavoritesPreview() {
+    SportHeader("Sport", isExpanded = false, onExpandClick = {}, showFavorites = true)
 }
+
+@Preview(showBackground = true)
+@Composable
+fun SportHeaderHasNotFavoritesPreview() {
+    SportHeader("Sport", isExpanded = false, onExpandClick = {}, showFavorites = false)
+}
+
+

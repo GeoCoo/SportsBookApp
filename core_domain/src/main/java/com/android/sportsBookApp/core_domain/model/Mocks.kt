@@ -1,4 +1,4 @@
-package com.android.sportsBookApp.core_model
+package com.android.sportsBookApp.core_domain.model
 
 fun proviedMockSports(): List<SportsEventsDomain> {
     return listOf(

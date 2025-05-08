@@ -1,52 +1,55 @@
-# Gradle
+# === Gradle ===
 .gradle/
 build/
 **/build/
+!gradle/wrapper/gradle-wrapper.jar
 
-# Kotlin/Java compiler
-*.class
-
-# Log files
-*.log
-
-# Local environment files
-local.properties
-
-# IDEs
+# === IDEs ===
 .idea/
 *.iml
-*.ipr
-*.iws
 .vscode/
-*.sw?
 
-# OS
+# === OS files ===
 .DS_Store
 Thumbs.db
 
-# Generated files
-captures/
-output/
+# === Local environment ===
+local.properties
+*.jks
+*.keystore
+
+# === Log files ===
+*.log
+
+# === APKs / Artifacts ===
 *.apk
 *.ap_
 
-# Keystore files (if you accidentally created one here)
-*.jks
+# === Kotlin / Java ===
+*.class
+*.jar
+*.war
+*.ear
 
-# Crash logs or debug files
-*.stacktrace
-*.hprof
-
-# Android Studio Navigation safe args
+# === Generated code ===
+captures/
+output/
+.navigation/
 **/generated/
+buildSrc/.gradle/
 
-# Compose compiler metrics (optional)
+# === Jetpack Compose specific ===
 compose-metrics/
 compose-reports/
 
-# Jetpack Compose compiler reports
-*.kotlin_module
+# === Test & Coverage ===
+*.ec
+coverage/
 
-# Misc
+# === Firebase ===
+google-services.json
+firebase-debug.log
+
+# === Misc ===
 *.orig
 *.rej

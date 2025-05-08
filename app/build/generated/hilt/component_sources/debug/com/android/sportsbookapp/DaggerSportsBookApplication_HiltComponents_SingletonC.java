@@ -26,11 +26,8 @@ import com.android.sportsBookApp.core_domain.di.InteractorModule_ProvideMainInte
 import com.android.sportsBookApp.core_domain.interactor.SportsInteractor;
 import com.android.sportsBookApp.core_domain.interactor.SportsInteractorImpl;
 import com.android.sportsBookApp.core_resources.di.ResourceModule;
-import com.android.sportsBookApp.core_resources.di.ResourceModule_ProvideResourceProviderFactory;
 import com.android.sportsBookApp.feature_main_screen.ui.MainViewModel;
 import com.android.sportsBookApp.feature_main_screen.ui.MainViewModel_HiltModules_KeyModule_ProvideFactory;
-import com.betson.interviewTest.core_resources.provider.ResourceProvider;
-import com.betson.interviewTest.core_resources.provider.ResourceProviderImpl;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -45,7 +42,6 @@ import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories_Internal
 import dagger.hilt.android.internal.managers.ActivityRetainedComponentManager_LifecycleModule_ProvideActivityRetainedLifecycleFactory;
 import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.android.internal.modules.ApplicationContextModule;
-import dagger.hilt.android.internal.modules.ApplicationContextModule_ProvideContextFactory;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
 import dagger.internal.Preconditions;
@@ -78,16 +74,16 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
     return new Builder();
   }
 
+  public static SportsBookApplication_HiltComponents.SingletonC create() {
+    return new Builder().build();
+  }
+
   public static final class Builder {
     private ApiModule apiModule;
-
-    private ApplicationContextModule applicationContextModule;
 
     private NetworkModule networkModule;
 
     private RepositoryModule repositoryModule;
-
-    private ResourceModule resourceModule;
 
     private Builder() {
     }
@@ -97,8 +93,12 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
       return this;
     }
 
+    /**
+     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
+     */
+    @Deprecated
     public Builder applicationContextModule(ApplicationContextModule applicationContextModule) {
-      this.applicationContextModule = Preconditions.checkNotNull(applicationContextModule);
+      Preconditions.checkNotNull(applicationContextModule);
       return this;
     }
 
@@ -112,8 +112,12 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
       return this;
     }
 
+    /**
+     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
+     */
+    @Deprecated
     public Builder resourceModule(ResourceModule resourceModule) {
-      this.resourceModule = Preconditions.checkNotNull(resourceModule);
+      Preconditions.checkNotNull(resourceModule);
       return this;
     }
 
@@ -121,17 +125,13 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
       if (apiModule == null) {
         this.apiModule = new ApiModule();
       }
-      Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
       if (networkModule == null) {
         this.networkModule = new NetworkModule();
       }
       if (repositoryModule == null) {
         this.repositoryModule = new RepositoryModule();
       }
-      if (resourceModule == null) {
-        this.resourceModule = new ResourceModule();
-      }
-      return new SingletonCImpl(apiModule, applicationContextModule, networkModule, repositoryModule, resourceModule);
+      return new SingletonCImpl(apiModule, networkModule, repositoryModule);
     }
   }
 
@@ -517,7 +517,7 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.android.sportsBookApp.feature_main_screen.ui.MainViewModel 
-          return (T) new MainViewModel(viewModelCImpl.sportsInteractor(), singletonCImpl.provideResourceProvider.get());
+          return (T) new MainViewModel(viewModelCImpl.sportsInteractor());
 
           default: throw new AssertionError(id);
         }
@@ -601,10 +601,6 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
 
     private final NetworkModule networkModule;
 
-    private final ResourceModule resourceModule;
-
-    private final ApplicationContextModule applicationContextModule;
-
     private final SingletonCImpl singletonCImpl = this;
 
     private Provider<HttpLoggingInterceptor> providesHttpLoggingInterceptorProvider;
@@ -621,17 +617,12 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
 
     private Provider<SportsRepository> provideMainRepositoryProvider;
 
-    private Provider<ResourceProvider> provideResourceProvider;
-
-    private SingletonCImpl(ApiModule apiModuleParam,
-        ApplicationContextModule applicationContextModuleParam, NetworkModule networkModuleParam,
-        RepositoryModule repositoryModuleParam, ResourceModule resourceModuleParam) {
+    private SingletonCImpl(ApiModule apiModuleParam, NetworkModule networkModuleParam,
+        RepositoryModule repositoryModuleParam) {
       this.repositoryModule = repositoryModuleParam;
       this.apiModule = apiModuleParam;
       this.networkModule = networkModuleParam;
-      this.resourceModule = resourceModuleParam;
-      this.applicationContextModule = applicationContextModuleParam;
-      initialize(apiModuleParam, applicationContextModuleParam, networkModuleParam, repositoryModuleParam, resourceModuleParam);
+      initialize(apiModuleParam, networkModuleParam, repositoryModuleParam);
 
     }
 
@@ -643,15 +634,9 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
       return new SportsRepositoryImpl(provideApiClientProvider.get());
     }
 
-    private ResourceProviderImpl resourceProviderImpl() {
-      return new ResourceProviderImpl(ApplicationContextModule_ProvideContextFactory.provideContext(applicationContextModule));
-    }
-
     @SuppressWarnings("unchecked")
-    private void initialize(final ApiModule apiModuleParam,
-        final ApplicationContextModule applicationContextModuleParam,
-        final NetworkModule networkModuleParam, final RepositoryModule repositoryModuleParam,
-        final ResourceModule resourceModuleParam) {
+    private void initialize(final ApiModule apiModuleParam, final NetworkModule networkModuleParam,
+        final RepositoryModule repositoryModuleParam) {
       this.providesHttpLoggingInterceptorProvider = DoubleCheck.provider(new SwitchingProvider<HttpLoggingInterceptor>(singletonCImpl, 5));
       this.provideOkHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<OkHttpClient>(singletonCImpl, 4));
       this.provideConverterFactoryProvider = DoubleCheck.provider(new SwitchingProvider<GsonConverterFactory>(singletonCImpl, 6));
@@ -659,7 +644,6 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
       this.provideApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<ApiService>(singletonCImpl, 2));
       this.provideApiClientProvider = DoubleCheck.provider(new SwitchingProvider<ApiClient>(singletonCImpl, 1));
       this.provideMainRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<SportsRepository>(singletonCImpl, 0));
-      this.provideResourceProvider = DoubleCheck.provider(new SwitchingProvider<ResourceProvider>(singletonCImpl, 7));
     }
 
     @Override
@@ -715,9 +699,6 @@ public final class DaggerSportsBookApplication_HiltComponents_SingletonC {
 
           case 6: // retrofit2.converter.gson.GsonConverterFactory 
           return (T) NetworkModule_ProvideConverterFactoryFactory.provideConverterFactory(singletonCImpl.networkModule);
-
-          case 7: // com.betson.interviewTest.core_resources.provider.ResourceProvider 
-          return (T) ResourceModule_ProvideResourceProviderFactory.provideResourceProvider(singletonCImpl.resourceModule, singletonCImpl.resourceProviderImpl());
 
           default: throw new AssertionError(id);
         }

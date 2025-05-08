@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml:2:13-83
-INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml:2:13-83
+ADDED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml:2:13-83
+INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml:2:13-83
 	package
-		INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml
+		INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml
 	xmlns:android
-		ADDED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml:2:23-81
+		ADDED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml:2:23-81
 uses-sdk
-INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml reason: use-sdk injection requested
-INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml
-INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml
+INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml reason: use-sdk injection requested
+INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml
+INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml
 	android:targetSdkVersion
-		INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml
+		INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml
 	android:minSdkVersion
-		INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest4235463504060992213.xml
+		INJECTED from /Users/coo/Desktop/Studio/sportsBookApp/core_model/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest2761766806943132102.xml

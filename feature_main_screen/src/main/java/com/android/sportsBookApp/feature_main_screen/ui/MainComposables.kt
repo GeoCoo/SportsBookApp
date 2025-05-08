@@ -1,5 +1,10 @@
 package com.android.sportsBookApp.feature_main_screen.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -64,54 +70,47 @@ fun MatchCard(
 
     val formattedTime = formatTime(timeLeft.toLong())
 
-    Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2D2D2D)),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .padding(16.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(16.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(16.dp)
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 4.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = formattedTime,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Favorite",
-                tint = Color.LightGray,
-                modifier = Modifier.size(24.dp)
-            )
-
             Text(
-                text = event.competitors?.first ?:"",
+                text = formattedTime,
                 color = Color.White,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                text = "vs",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Text(
-                text = event.competitors?.second ?: "",
-                color = Color.White,
-                style = MaterialTheme.typography.bodyLarge
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge
             )
         }
+
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = "Favorite",
+            tint = Color.LightGray,
+            modifier = Modifier.size(24.dp)
+        )
+
+        Text(
+            text = event.competitors?.first ?: "",
+            color = Color.White,
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Text(
+            text = "vs",
+            color = Color.Red,
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Text(
+            text = event.competitors?.second ?: "",
+            color = Color.White,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 
@@ -126,9 +125,10 @@ private fun formatTime(seconds: Long): String {
 @Composable
 fun SportHeader(
     title: String,
-    isFavorite: Boolean = false,
+    showFavorites: Boolean = false,
+    isExpanded: Boolean,
     onFavoriteChanged: (Boolean) -> Unit = {},
-    onExpandClick: () -> Unit = {}
+    onExpandClick: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -157,7 +157,7 @@ fun SportHeader(
 
         // Right section: Favorite toggle + arrow icon
         Row(verticalAlignment = Alignment.CenterVertically) {
-            var isChecked by remember { mutableStateOf(isFavorite) }
+            var isChecked by remember { mutableStateOf(showFavorites) }
 
             Switch(
                 checked = isChecked,
@@ -174,9 +174,10 @@ fun SportHeader(
                 }
             )
 
-            IconButton(onClick = onExpandClick) {
+            IconButton(onClick = { onExpandClick.invoke(isExpanded) }) {
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
+                    tint = Color.Black,
+                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = "Collapse"
                 )
             }
@@ -186,31 +187,44 @@ fun SportHeader(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SportCompetitions(competitions: List<EventDomain>){
+fun SportCompetitions(competitions: List<EventDomain>) {
     FlowRow(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp)
             .fillMaxWidth()
     ) {
-        competitions.forEach {comppetition->
+        competitions.forEach { comppetition ->
             MatchCard(comppetition)
         }
     }
 }
 
 @Composable
-fun MainScreenListItem(sport:SportsEventsDomain){
+fun MainScreenListItem(
+    sport: SportsEventsDomain,
+    expandSportCompetitions: (Boolean) -> Unit
+) {
     Column {
-        SportHeader(sport.sportName ?: "")
-        SportCompetitions(competitions = sport.activeEvents)
-
+        SportHeader(
+            sport.sportName ?: "",
+            showFavorites = sport.hasFavoritess,
+            isExpanded = sport.isExpanded,
+            onExpandClick = expandSportCompetitions
+        )
+            AnimatedVisibility(
+                visible = sport.isExpanded,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                SportCompetitions(competitions = sport.activeEvents)
+            }
     }
 }
 
 @Preview
 @Composable
-fun MainScreenListPreview(){
-    MainScreenListItem(sport = proviedMockSports()[0])
+fun MainScreenListPreview() {
+    MainScreenListItem(sport = proviedMockSports()[0], {})
 }
 
 
@@ -222,8 +236,14 @@ fun SportCompetitionsPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun SportHeaderPreview() {
-    SportHeader("Sport")
+fun SportHeaderExpandedPreview() {
+    SportHeader("Sport", isExpanded = true, onExpandClick = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SportHeaderNotExpandedPreview() {
+    SportHeader("Sport", isExpanded = false, onExpandClick = {})
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)

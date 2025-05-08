@@ -19,18 +19,21 @@ import javax.inject.Inject
 
 data class State(
     val isLoading: Boolean = false,
-    val sportsList: List<SportsEventsDomain>? = listOf()
+    val sportsList: MutableList<SportsEventsDomain>? = mutableListOf()
 ) : ViewState
 
 sealed class Event : ViewEvent {
     object GetSports : Event()
+    data class ExpandSportCompetitions(val sport: SportsEventsDomain) : Event()
+    object ToggleFavorites : Event()
+    object setFavorite : Event()
 }
 
 sealed class Effect : ViewSideEffect {}
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val sportsInteractor: SportsInteractor,resourceProvider:ResourceProvider
+    private val sportsInteractor: SportsInteractor
 ) : MviViewModel<Event, State, Effect>() {
     override fun setInitialState(): State = State(
         isLoading = true,
@@ -47,15 +50,29 @@ class MainViewModel @Inject constructor(
                             is SportsPartialState.Success -> {
                                 setState {
                                     copy(
-                                        sportsList = it.sports,
+                                        sportsList = it.sports?.toMutableList(),
                                         isLoading = false,
-                                        )
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
+
+            is Event.ExpandSportCompetitions -> {
+                viewModelScope.launch {
+                    val sports = viewState.value.sportsList?.map {
+                        it.copy(isExpanded = if (it.sportId == event.sport.sportId) !it.isExpanded else it.isExpanded)
+                    }
+                    setState {
+                        copy(sportsList = sports?.toMutableList())
+                    }
+                }
+            }
+
+            is Event.ToggleFavorites -> TODO()
+            is Event.setFavorite -> TODO()
         }
     }
 }

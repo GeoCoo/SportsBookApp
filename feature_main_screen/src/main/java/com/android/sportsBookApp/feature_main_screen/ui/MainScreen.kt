@@ -1,6 +1,8 @@
 package com.android.sportsBookApp.feature_main_screen.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -11,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -27,8 +30,7 @@ fun MainScreen() {
     val viewModel = hiltViewModel<MainViewModel>()
     val state = viewModel.viewState
     LifecycleEffect(
-        lifecycleOwner = LocalLifecycleOwner.current,
-        lifecycleEvent = Lifecycle.Event.ON_RESUME
+        lifecycleOwner = LocalLifecycleOwner.current, lifecycleEvent = Lifecycle.Event.ON_RESUME
     ) {
         viewModel.setEvent(Event.GetSports)
     }
@@ -40,17 +42,21 @@ fun MainScreen() {
                 titleContentColor = MaterialTheme.colorScheme.surfaceTint
             ), title = { Text(text = stringResource(R.string.app_name)) })
     }) { paddingValues ->
-        if (state.value.isLoading)
+        if (state.value.isLoading) Box(
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator()
-        else
-            LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                state.value.sportsList?.let {
-                    items(it.size) { index ->
-                        MainScreenListItem(it[index])
-                    }
+        }
+        else LazyColumn(modifier = Modifier.padding(paddingValues)) {
+            state.value.sportsList?.let {sports->
+                items(sports.size) { index ->
+                    MainScreenListItem(sports[index], expandSportCompetitions = {
+                        viewModel.setEvent(Event.ExpandSportCompetitions(sports[index]))
+                    })
+
                 }
             }
-
+        }
     }
-}
 
+}

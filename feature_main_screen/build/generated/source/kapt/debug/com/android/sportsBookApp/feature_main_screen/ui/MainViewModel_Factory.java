@@ -1,7 +1,6 @@
 package com.android.sportsBookApp.feature_main_screen.ui;
 
 import com.android.sportsBookApp.core_domain.interactor.SportsInteractor;
-import com.betson.interviewTest.core_resources.provider.ResourceProvider;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -25,26 +24,20 @@ import javax.inject.Provider;
 public final class MainViewModel_Factory implements Factory<MainViewModel> {
   private final Provider<SportsInteractor> sportsInteractorProvider;
 
-  private final Provider<ResourceProvider> resourceProvider;
-
-  public MainViewModel_Factory(Provider<SportsInteractor> sportsInteractorProvider,
-      Provider<ResourceProvider> resourceProvider) {
+  public MainViewModel_Factory(Provider<SportsInteractor> sportsInteractorProvider) {
     this.sportsInteractorProvider = sportsInteractorProvider;
-    this.resourceProvider = resourceProvider;
   }
 
   @Override
   public MainViewModel get() {
-    return newInstance(sportsInteractorProvider.get(), resourceProvider.get());
+    return newInstance(sportsInteractorProvider.get());
   }
 
-  public static MainViewModel_Factory create(Provider<SportsInteractor> sportsInteractorProvider,
-      Provider<ResourceProvider> resourceProvider) {
-    return new MainViewModel_Factory(sportsInteractorProvider, resourceProvider);
+  public static MainViewModel_Factory create(Provider<SportsInteractor> sportsInteractorProvider) {
+    return new MainViewModel_Factory(sportsInteractorProvider);
   }
 
-  public static MainViewModel newInstance(SportsInteractor sportsInteractor,
-      ResourceProvider resourceProvider) {
-    return new MainViewModel(sportsInteractor, resourceProvider);
+  public static MainViewModel newInstance(SportsInteractor sportsInteractor) {
+    return new MainViewModel(sportsInteractor);
   }
 }

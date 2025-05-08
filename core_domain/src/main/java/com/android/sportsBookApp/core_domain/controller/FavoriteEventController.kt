@@ -1,19 +1,12 @@
 package com.android.sportsBookApp.core_domain.controller
 
-import com.android.sportsBookApp.core_domain.model.EventDomain
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import java.util.prefs.Preferences
 import javax.inject.Inject
-import kotlin.collections.count
-import kotlin.collections.reversed
-import kotlin.collections.takeLast
-import kotlin.collections.toMutableList
-import kotlin.text.isEmpty
 
 interface FavoriteEventController {
     fun getFavorites(): Flow<FavoriteEventsControllerPartialState>

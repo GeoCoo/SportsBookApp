@@ -1,98 +1,65 @@
-# === Android / Kotlin / Gradle typical ignores ===
-*.iml
+# === Gradle ===
 .gradle/
-.idea/
 build/
-captures/
-.externalNativeBuild/
-.cxx/
+!gradle-wrapper.jar
 
-# APKs & other generated files
+# === Android Studio ===
+.idea/
+*.iml
+local.properties
+captures/
+
+# === Build output ===
+**/build/
+**/out/
 *.apk
 *.ap_
-*.dex
-*.class
-*.jar
-*.keystore
 
-# KAPT & Kotlin generated
+# === IntelliJ cache ===
+*.iws
+*.ipr
+*.class
+*.dex
+*.jar
+*.bin
 *.kapt_metadata
 *.kotlin_module
+*.log
+*.tmp
 
-# Compose / Jetpack specific
-*.compose-metadata
+# === Jetpack Compose & Metadata ===
 *.metadata
+*.compose-metadata
 *.kotlin_metadata
 
-# Misc IntelliJ + Studio files
-*.log
-*.hprof
-*.orig
-*.rej
+# === Compose auto-generated classes ===
+*ComposableSingletons*.*
+MainComposablesKt$*.*
+MainScreenKt$*.*
+MainViewModel$*.*
+MainScreenRouterKt$*.*
+ViewsKt$*.*
+*.dex
 
-# Test reports
-test-results/
-outputs/
-jacoco/
-
-# Misc Gradle
-gradle-app.setting
-local.properties
-
-# Jetifier cache
-.idea/.name
-.idea/modules/
-.idea/workspace.xml
-.idea/tasks.xml
-
-# Android Studio
-.idea/caches/
-.idea/libraries/
-.idea/modules.xml
-.idea/navEditor.xml
-.idea/assetWizardSettings.xml
-
-# Encryption / tmp / desugar
-*.keystream
+# === Keystore, encryption blobs, and UUID-style files ===
+*.keystream*
+*.values.*
 *.len
-*.values.at
-*.tab
-*.tab_i
-*.bin
-*.txt
-*.xml
-
-# Encrypted or UUID-style blobs
-*_0.jar
-*_1.jar
 *=
 *==
 
-# Ignore screenshots or media
+# === IDE state ===
+.idea/caches/
+.idea/libraries/
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# === MacOS ===
+.DS_Store
+
+# === Screenshots or media ===
 *.png
 *.jpg
 *.jpeg
 *.webp
-
-# MacOS system files
-.DS_Store
-
-# Unversioned IDE/Studio project files
-**/gradle.xml
-**/build-history.bin
-**/classpath-entries.bin
-**/last-build.bin
-**/shrunk-classpath-snapshot.bin
-**/classpath-structure.bin
-**/merge-state
-
-# Ignore all auto-generated Compose classes
-*ComposableSingletons*.*
-MainComposablesKt$*.*
-MainScreenKt$*.*
-MainScreenRouterKt$*.*
-MainViewModel$*.*
-ViewsKt$*.*
-
-# Optional: ignore unversioned top-level files
-*.Screenshot_*.png

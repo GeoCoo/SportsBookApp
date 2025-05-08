@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 val serverDateParseFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 val dateTimeDisplayFormatter = SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US)

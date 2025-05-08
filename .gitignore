@@ -1,55 +1,105 @@
-# === Gradle ===
-.gradle/
-build/
-**/build/
-!gradle/wrapper/gradle-wrapper.jar
-
-# === IDEs ===
-.idea/
+# === Android / Kotlin / Gradle typical ignores ===
 *.iml
-.vscode/
+.gradle/
+.idea/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
 
-# === OS files ===
-.DS_Store
-Thumbs.db
-
-# === Local environment ===
-local.properties
-*.jks
-*.keystore
-
-# === Log files ===
-*.log
-
-# === APKs / Artifacts ===
+# APKs & other generated files
 *.apk
 *.ap_
-
-# === Kotlin / Java ===
+*.dex
 *.class
 *.jar
-*.war
-*.ear
+*.keystore
+*.bin
 
-# === Generated code ===
-captures/
-output/
-.navigation/
-**/generated/
-buildSrc/.gradle/
+# KAPT & Kotlin generated
+*.kapt_metadata
+*.kotlin_module
 
-# === Jetpack Compose specific ===
-compose-metrics/
-compose-reports/
+# Compose / Jetpack specific
+*.compose-metadata
+*.metadata
+*.kotlin_metadata
 
-# === Test & Coverage ===
-*.ec
-coverage/
-
-# === Firebase ===
-google-services.json
-firebase-debug.log
-
-# === Misc ===
+# Misc IntelliJ + Studio files
+*.log
+*.hprof
 *.orig
 *.rej
+
+# Test reports
+test-results/
+outputs/
+jacoco/
+
+# Misc Gradle
+.gradle/
+build/
+gradle-app.setting
+local.properties
+
+# Jetifier cache
+.idea/.name
+.idea/libraries/
+.idea/modules/
+.idea/workspace.xml
+.idea/tasks.xml
+
+# Android Studio
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Encryption / tmp / desugar
+*.keystream
+*.len
+*.values.at
+*.tab
+*.tab_i
+*.dex
+*.bin
+*.txt
+*.xml
+
+# Encrypted or UUID-style blobs
+*.apk
+*_0.jar
+*_1.jar
+*.jar
+*=
+*==
+
+# Ignore screenshots or media
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# MacOS system files
+.DS_Store
+
+# Unversioned IDE/Studio project files
+**/gradle.xml
+**/build-history.bin
+**/classpath-entries.bin
+**/last-build.bin
+**/shrunk-classpath-snapshot.bin
+**/classpath-structure.bin
+**/merge-state
+
+# Ignore all auto-generated Compose classes
+*ComposableSingletons*.*
+MainComposablesKt$*.*
+MainScreenKt$*.*
+MainScreenRouterKt$*.*
+MainViewModel$*.*
+ViewsKt$*.*
+
+# Optional: ignore unversioned top-level files
+*.Screenshot_*.png

@@ -14,7 +14,6 @@ captures/
 *.class
 *.jar
 *.keystore
-*.bin
 
 # KAPT & Kotlin generated
 *.kapt_metadata
@@ -37,14 +36,11 @@ outputs/
 jacoco/
 
 # Misc Gradle
-.gradle/
-build/
 gradle-app.setting
 local.properties
 
 # Jetifier cache
 .idea/.name
-.idea/libraries/
 .idea/modules/
 .idea/workspace.xml
 .idea/tasks.xml
@@ -62,16 +58,13 @@ local.properties
 *.values.at
 *.tab
 *.tab_i
-*.dex
 *.bin
 *.txt
 *.xml
 
 # Encrypted or UUID-style blobs
-*.apk
 *_0.jar
 *_1.jar
-*.jar
 *=
 *==
 

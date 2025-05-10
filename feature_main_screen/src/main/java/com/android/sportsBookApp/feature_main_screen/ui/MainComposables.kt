@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -35,16 +37,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sportsBookApp.core_domain.model.EventDomain
 import com.android.sportsBookApp.core_domain.model.SportsEventsDomain
-import com.android.sportsBookApp.core_domain.model.provideMockEvents
-import com.android.sportsBookApp.core_domain.model.proviedMockSports
+import com.android.sportsBookApp.core_resources.R
 import com.android.sportsBookApp.core_ui.component.CompetitorsView
 import com.android.sportsBookApp.core_ui.component.CountdownTimer
 import com.android.sportsBookApp.core_ui.component.FavoriteIcon
@@ -70,64 +71,99 @@ fun MatchCard(competition: EventDomain, toggleFavoriteEvent: (String, Boolean) -
 @Composable
 fun SportHeader(
     title: String,
-    showFavorites: Boolean = false,
     isExpanded: Boolean,
+    isEnabled: Boolean,
     onFavoriteChanged: (Boolean) -> Unit = {},
-    onExpandClick: (Boolean) -> Unit
+    onExpandClick: (Boolean) -> Unit,
+    notifyNotEnabled: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.onSurface)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Left section: Red dot and "SPORT"
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
                     .size(16.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFD84315)) // Deep orange
+                    .background(MaterialTheme.colorScheme.secondary)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
-                color = Color.Black,
                 fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 fontWeight = FontWeight.Bold
             )
         }
 
-        // Right section: Favorite toggle + arrow icon
         Row(verticalAlignment = Alignment.CenterVertically) {
-            var isChecked by remember { mutableStateOf(showFavorites) }
-
-            Switch(
-                checked = isChecked,
-                onCheckedChange = {
-                    isChecked = it
-                    onFavoriteChanged(it)
-                },
-                thumbContent = {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Favorite",
-                        modifier = Modifier.size(SwitchDefaults.IconSize)
-                    )
-                }
+            ToggleSwitch(
+                isEnabled = isEnabled,
+                onFavoriteChanged = onFavoriteChanged,
+                notifyNotEnabled = notifyNotEnabled
             )
-
-            IconButton(onClick = { onExpandClick.invoke(isExpanded) }) {
+            IconButton(onClick = { onExpandClick(isExpanded) }) {
                 Icon(
-                    tint = Color.Black,
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Collapse"
+                    contentDescription = "Toggle Expand",
+                    tint = MaterialTheme.colorScheme.surfaceVariant
                 )
             }
         }
     }
+}
+
+@Composable
+fun ToggleSwitch(
+    isEnabled: Boolean,
+    onFavoriteChanged: (Boolean) -> Unit = {},
+    notifyNotEnabled: () -> Unit
+) {
+    var isChecked by remember { mutableStateOf(false) }
+
+    val trackColor = when {
+        !isEnabled -> MaterialTheme.colorScheme.surfaceVariant
+        else -> MaterialTheme.colorScheme.surface
+    }
+
+    val thumbColor = when {
+        !isEnabled -> MaterialTheme.colorScheme.surfaceVariant
+        isChecked -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.tertiary
+    }
+
+
+    Switch(
+        checked = isChecked,
+        onCheckedChange = {
+            if (isEnabled) {
+                isChecked = it
+                onFavoriteChanged(it)
+            } else {
+                notifyNotEnabled()
+            }
+        },
+        enabled = true,
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = thumbColor,
+            uncheckedThumbColor = thumbColor,
+            checkedTrackColor = trackColor,
+            uncheckedTrackColor = trackColor
+        ),
+        thumbContent = {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                modifier = Modifier.size(SwitchDefaults.IconSize),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -136,85 +172,96 @@ fun SportCompetitions(
     competitions: List<EventDomain>,
     toggleFavoriteEvent: (String, Boolean) -> Unit
 ) {
-
-    FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalArrangement = Arrangement.Start
-    ) {
-        competitions.forEach { competition ->
-            MatchCard(competition, toggleFavoriteEvent)
+    if (competitions.isNotEmpty())
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            competitions.forEach { competition ->
+                MatchCard(competition, toggleFavoriteEvent)
+            }
         }
-    }
+    else
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Text(stringResource(R.string.no_sport_events))
+        }
 }
 
 @Composable
 fun MainScreenListItem(
     sport: SportsEventsDomain,
+    isEnabled: Boolean,
     expandSportCompetitions: (Boolean) -> Unit,
-    toggleFavoriteEvent: (String, Boolean) -> Unit
+    toggleFavoriteEvent: (String, Boolean) -> Unit,
+    onFavoriteChanged: (Boolean) -> Unit,
+    notifyNotEnabled: () -> Unit
 ) {
     Column {
         SportHeader(
             sport.sportName ?: "",
-            showFavorites = sport.hasFavoritess,
             isExpanded = sport.isExpanded,
-            onExpandClick = expandSportCompetitions
+            isEnabled = isEnabled,
+            onExpandClick = expandSportCompetitions,
+            onFavoriteChanged = onFavoriteChanged,
+            notifyNotEnabled = notifyNotEnabled
         )
         AnimatedVisibility(
             visible = sport.isExpanded,
             enter = expandVertically() + fadeIn(),
             exit = shrinkVertically() + fadeOut()
         ) {
-            SportCompetitions(competitions = sport.activeEvents, toggleFavoriteEvent)
+            sport.activeEvents?.let { SportCompetitions(competitions = it, toggleFavoriteEvent) }
         }
     }
 }
 
-@Preview
-@Composable
-fun MainScreenListPreview() {
-    MainScreenListItem(sport = proviedMockSports()[0], {}, { _,_ -> }
-    )
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
-@Composable
-fun MatchCardPreview() {
-    MatchCard(provideMockEvents()[0], {_,_->})
-}
-
-
-@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
-@Composable
-fun SportCompetitionsPreview() {
-    SportCompetitions(competitions = provideMockEvents(), { _, _ -> })
-}
-
+//@Preview
+//@Composable
+//fun MainScreenListPreview() {
+//    MainScreenListItem(
+//        sport = proviedMockSports()[0],
+//        isEnabled = true,
+//        expandSportCompetitions = {},
+//        onFavoriteChanged = {},
+//        toggleFavoriteEvent = { _, _ -> }
+//    )
+//}
+//
+//@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
+//@Composable
+//fun MatchCardPreview() {
+//    MatchCard(provideMockEvents()[0], fun(_: String, _: Boolean) {
+//
+//    })
+//}
+//
+//
+//@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
+//@Composable
+//fun SportCompetitionsPreview() {
+//    SportCompetitions(competitions = provideMockEvents(), fun(_: String, _: Boolean) {
+//
+//    })
+//}
+//
 @Preview(showBackground = true)
 @Composable
 fun SportHeaderExpandedPreview() {
-    SportHeader("Sport", isExpanded = true, onExpandClick = {})
+    SportHeader(
+        "Sport",
+        isExpanded = true,
+        isEnabled = true,
+        onExpandClick = {},
+        onFavoriteChanged = {},
+        notifyNotEnabled = {})
 }
-
-@Preview(showBackground = true)
-@Composable
-fun SportHeaderNotExpandedPreview() {
-    SportHeader("Sport", isExpanded = false, onExpandClick = {})
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SportHeaderHasFavoritesPreview() {
-    SportHeader("Sport", isExpanded = false, onExpandClick = {}, showFavorites = true)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SportHeaderHasNotFavoritesPreview() {
-    SportHeader("Sport", isExpanded = false, onExpandClick = {}, showFavorites = false)
-}
-
-
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun SportHeaderNotExpandedPreview() {
+//    SportHeader("Sport", isExpanded = false, isEnabled = false, onExpandClick = {})
+//}
+//

@@ -5,17 +5,21 @@ fun proviedMockSports(): List<SportsEventsDomain> {
         SportsEventsDomain(
             sportName = "Football",
             activeEvents = provideMockEvents(),
-            sportId = "football"
+            sportId = "football",
+            hasFavorites = true
         ),
         SportsEventsDomain(
             sportName = "Basketball",
             activeEvents = provideMockEvents(),
-            sportId = "basketball"
+            sportId = "basketball",
+            hasFavorites = true
+
         ),
         SportsEventsDomain(
             sportName = "Tennis",
             activeEvents = provideMockEvents(),
-            sportId = "tennis"
+            sportId = "tennis",
+            hasFavorites = true
         )
     )
 }

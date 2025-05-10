@@ -16,7 +16,6 @@ data class EventDto(
     @SerializedName("tt") var eventStartTime: Int? = null
 )
 
-
 fun String?.splitToPairByDash(): Pair<String, String>? {
     if (this.isNullOrEmpty()) return null
 

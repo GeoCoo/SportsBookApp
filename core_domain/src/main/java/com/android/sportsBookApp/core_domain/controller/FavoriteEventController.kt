@@ -2,22 +2,18 @@ package com.android.sportsBookApp.core_domain.controller
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface FavoriteEventController {
-    fun getFavorites(): Flow<FavoriteEventsControllerPartialState>
-    fun addFavorite(eventId: String)
-    fun removeFavorite(eventId: String)
-
+    suspend fun getFavorites(): Flow<FavoriteEventsControllerPartialState>
+    suspend fun addFavorite(eventId: String): Flow<FavoriteEventsControllerPartialState>
+    suspend fun removeFavorite(eventId: String): Flow<FavoriteEventsControllerPartialState>
 }
 
 class FavoriteEventControllerImpl @Inject constructor(
     private val preferencesController: PreferencesController,
-    private val externalScope: CoroutineScope,
     private val gson: Gson
 ) : FavoriteEventController {
 
@@ -31,38 +27,38 @@ class FavoriteEventControllerImpl @Inject constructor(
         }
     }
 
+    private fun saveFavorites(favorites: List<String>) {
+        val jsonObject = gson.toJson(favorites)
+        preferencesController.setString("FAVORITES", jsonObject)
+    }
 
-    override fun getFavorites(): Flow<FavoriteEventsControllerPartialState> = flow {
+    override suspend fun getFavorites(): Flow<FavoriteEventsControllerPartialState> = flow {
         val favorites = loadFavorites()
         when {
             favorites.isEmpty() -> emit(FavoriteEventsControllerPartialState.Fail(""))
-            else ->  emit (FavoriteEventsControllerPartialState.Success(loadFavorites()))
+            else -> emit(FavoriteEventsControllerPartialState.Success(favorites))
         }
     }
 
-
-    override fun addFavorite(eventId: String) {
-        externalScope.launch {
-            val favorites = loadFavorites()
-            favorites.add(eventId)
-            val jsonObject = gson.toJson(favorites)
-            preferencesController.setString("FAVORITES", jsonObject)
-        }
+    override suspend fun addFavorite(eventId: String) = flow {
+        emit(updateFavorites { add(eventId) })
     }
 
-    override fun removeFavorite(eventId: String) {
-        externalScope.launch {
-            val favorites = loadFavorites()
-            favorites.remove(eventId)
-            val jsonObject = gson.toJson(favorites)
-            preferencesController.setString("FAVORITES", jsonObject)
-        }
+    override suspend fun removeFavorite(eventId: String) = flow {
+        emit(updateFavorites { remove(eventId) })
     }
 
+    private fun updateFavorites(
+        modify: MutableList<String>.() -> Boolean
+    ): FavoriteEventsControllerPartialState {
+        val favorites = loadFavorites()
+        val changed = favorites.modify()
+        if (changed) saveFavorites(favorites)
+        return FavoriteEventsControllerPartialState.Success(favorites)
+    }
 }
 
 sealed class FavoriteEventsControllerPartialState {
     data class Success(val favoriteEvents: List<String>) : FavoriteEventsControllerPartialState()
     data class Fail(val msg: String) : FavoriteEventsControllerPartialState()
-
 }

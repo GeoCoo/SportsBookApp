@@ -1,4 +1,4 @@
-package com.betson.interviewTest.core_resources.provider
+package com.android.sportsBookApp.core_resources.provider
 
 import android.content.Context
 import androidx.annotation.StringRes

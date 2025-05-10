@@ -7,46 +7,54 @@ import com.android.sportsBookApp.core_domain.interactor.FavoritesPartialState
 import com.android.sportsBookApp.core_domain.interactor.SportsInteractor
 import com.android.sportsBookApp.core_domain.interactor.SportsPartialState
 import com.android.sportsBookApp.core_domain.model.SportsEventsDomain
+import com.android.sportsBookApp.core_resources.R
 import com.android.sportsBookApp.core_ui.base.MviViewModel
 import com.android.sportsBookApp.core_ui.base.ViewEvent
 import com.android.sportsBookApp.core_ui.base.ViewSideEffect
 import com.android.sportsBookApp.core_ui.base.ViewState
+import com.android.sportsBookApp.core_resources.provider.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 data class State(
-    val isLoading: Boolean = false,
-    val sportsList: List<SportsEventsDomain>? = listOf(),
-    val savedFavorites: List<String>? = listOf(),
-    val errorMessage: String? = null
+    val isLoading: Boolean,
+    val sportEvents: List<SportsEventsDomain>?,
+    val savedFavorites: List<String>?,
+    val errorMessage: String?,
+    val noFavMsg: String = ""
 ) : ViewState
 
 sealed class Event : ViewEvent {
-    object GetSportsData : Event()
+    data class GetSportsData(val savedFavorites: List<String>?) : Event()
     data class ExpandSportCompetitions(val sport: SportsEventsDomain) : Event()
     data class ToggleFavoriteEvent(
         val sport: SportsEventsDomain,
         val favEvent: Pair<String, Boolean>
-    ) :
-        Event()
+    ) : Event()
 
     object GetSavedFavorites : Event()
+    object SetMessage : Event()
+    data class HideShowFavorites(val sportId: String?, val toggleFavorites: Boolean) : Event()
 
 }
 
 sealed class Effect : ViewSideEffect {
-    object GetSavedFavorites : Effect()
-
+    data class ShowMessage(val msg: String) : Effect()
 }
+
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val sportsInteractor: SportsInteractor
+    private val sportsInteractor: SportsInteractor,
+    private val resourceProvider: ResourceProvider
 ) : MviViewModel<Event, State, Effect>() {
     override fun setInitialState(): State = State(
         isLoading = true,
+        sportEvents = listOf(),
+        savedFavorites = listOf(),
+        errorMessage = null,
     )
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -57,14 +65,18 @@ class MainViewModel @Inject constructor(
                     sportsInteractor.getSports().collect {
                         when (it) {
                             is SportsPartialState.Failed -> {
-                                setState{
+                                setState {
                                     copy(errorMessage = it.errorMessage)
                                 }
                             }
+
                             is SportsPartialState.Success -> {
                                 setState {
                                     copy(
-                                        sportsList = mapEvents(viewState.value.savedFavorites, it.sports),
+                                        sportEvents = mapEvents(
+                                            event.savedFavorites,
+                                            it.sports
+                                        ),
                                         isLoading = false,
                                     )
                                 }
@@ -76,25 +88,66 @@ class MainViewModel @Inject constructor(
 
             is Event.ExpandSportCompetitions -> {
                 viewModelScope.launch {
-                    val sports = viewState.value.sportsList?.map {
+                    val sports = viewState.value.sportEvents?.map {
                         it.copy(isExpanded = if (it.sportId == event.sport.sportId) !it.isExpanded else it.isExpanded)
                     }
                     setState {
-                        copy(sportsList = sports?.toMutableList())
+                        copy(sportEvents = sports?.toMutableList())
                     }
                 }
             }
 
             is Event.ToggleFavoriteEvent -> {
                 viewModelScope.launch {
-                    val isFavorite = event.favEvent.second
-                    val eventId = event.favEvent.first
+                    val (eventId, isFavorite) = event.favEvent
                     when (isFavorite) {
-                        true -> sportsInteractor.removeFavorite(eventId)
-                        false -> sportsInteractor.addFavorite(eventId)
-                    }
-                    setEffect {
-                        Effect.GetSavedFavorites
+                        true -> {
+                            sportsInteractor.removeFavorite(eventId).collect {
+                                when (it) {
+                                    is FavoritesPartialState.Failed -> {
+                                        setEffect {
+                                            Effect.ShowMessage(it.errorMessage)
+                                        }
+                                    }
+
+                                    is FavoritesPartialState.Success -> {
+                                        setState {
+                                            copy(
+                                                savedFavorites = it.favorites,
+                                                sportEvents = mapEvents(
+                                                    it.favorites,
+                                                    viewState.value.sportEvents
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        false -> {
+                            sportsInteractor.addFavorite(eventId).collect {
+                                when (it) {
+                                    is FavoritesPartialState.Failed -> {
+                                        setEffect {
+                                            Effect.ShowMessage(it.errorMessage)
+                                        }
+                                    }
+
+                                    is FavoritesPartialState.Success -> {
+                                        setState {
+                                            copy(
+                                                savedFavorites = it.favorites,
+                                                sportEvents = mapEvents(
+                                                    it.favorites,
+                                                    viewState.value.sportEvents
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -111,7 +164,10 @@ class MainViewModel @Inject constructor(
                                 setState {
                                     copy(
                                         savedFavorites = it.favorites,
-                                        sportsList = mapEvents(it.favorites, viewState.value.sportsList)
+                                        sportEvents = mapEvents(
+                                            it.favorites,
+                                            viewState.value.sportEvents
+                                        )
                                     )
                                 }
                             }
@@ -119,19 +175,71 @@ class MainViewModel @Inject constructor(
                     }
                 }
             }
+
+            is Event.HideShowFavorites -> {
+                viewModelScope.launch {
+                    val updatedSportsList = viewState.value.sportEvents?.map { sport ->
+                        if (sport.sportId != event.sportId) return@map sport
+
+                        val allEvents = sport.originalEvents ?: sport.activeEvents.orEmpty()
+
+                        if (event.toggleFavorites) {
+                            val favorites = allEvents.filter { it.isFavorite }
+
+                            if (favorites.isEmpty()) {
+                                setEffect {
+                                    Effect.ShowMessage(resourceProvider.getString(R.string.no_sport_favs_msg))
+                                }
+                                return@map sport // No change
+                            }
+
+                            sport.copy(
+                                originalEvents = allEvents,
+                                activeEvents = favorites
+                            )
+                        } else {
+                            sport.copy(
+                                activeEvents = sport.originalEvents ?: sport.activeEvents,
+                                originalEvents = null
+                            )
+                        }
+                    }
+
+                    setState { copy(sportEvents = updatedSportsList) }
+                }
+            }
+
+
+
+            is Event.SetMessage -> {
+                setState {
+                    copy(
+                        noFavMsg = resourceProvider.getString(R.string.no_sport_favs_msg)
+                    )
+                }
+                setEffect { Effect.ShowMessage(viewState.value.noFavMsg) }
+            }
         }
     }
 
     private fun mapEvents(
         favorites: List<String>?,
         sports: List<SportsEventsDomain>?
-    ): List<SportsEventsDomain>? {
-        return sports?.map { sport ->
-            val updatedEvents = sport.activeEvents.map { event ->
-                event.copy(isFavorite = event.eventId in (favorites ?: emptyList()))
-            }
-            sport.copy(activeEvents = updatedEvents)
+    ): List<SportsEventsDomain>? = sports?.map { sport ->
+        val updatedActiveEvents = sport.activeEvents?.map { event ->
+            event.copy(isFavorite = event.eventId in (favorites.orEmpty()))
         }
+
+        val updatedOriginalEvents = sport.originalEvents?.map { event ->
+            event.copy(isFavorite = event.eventId in (favorites.orEmpty()))
+        }
+
+        sport.copy(
+            activeEvents = updatedActiveEvents,
+            originalEvents = updatedOriginalEvents,
+            hasFavorites = updatedActiveEvents?.any { it.isFavorite == true } == true
+        )
     }
+
 }
 

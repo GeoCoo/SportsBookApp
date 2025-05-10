@@ -1,7 +1,7 @@
 package com.android.sportsBookApp.core_resources.di
 
-import com.betson.interviewTest.core_resources.provider.ResourceProvider
-import com.betson.interviewTest.core_resources.provider.ResourceProviderImpl
+import com.android.sportsBookApp.core_resources.provider.ResourceProvider
+import com.android.sportsBookApp.core_resources.provider.ResourceProviderImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

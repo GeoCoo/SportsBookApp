@@ -47,10 +47,8 @@ fun LifecycleEffect(
                 block()
             }
         }
-        // Add the observer to the lifecycle
         lifecycleOwner.lifecycle.addObserver(observer)
 
-        // When the effect leaves the Composition, remove the observer
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
@@ -86,7 +84,7 @@ fun CountdownTimer(
 
 @Composable
 fun FavoriteIcon(isFavorite: Boolean, eventId: String, toggleFavoriteEvent: (String, Boolean) -> Unit) {
-    IconButton(onClick = { toggleFavoriteEvent.invoke(eventId,isFavorite) }) {
+    IconButton(onClick = { toggleFavoriteEvent(eventId,isFavorite) }) {
         Icon(
             imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
             contentDescription = "Favorite",
@@ -98,7 +96,6 @@ fun FavoriteIcon(isFavorite: Boolean, eventId: String, toggleFavoriteEvent: (Str
 
 @Composable
 fun CompetitorsView(competitors: Pair<String, String>?) {
-    // Competitors
     Text(
         text = competitors?.first ?: "",
         color = Color.White,

@@ -3,7 +3,7 @@ package com.android.sportsBookApp.core_domain.controller
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.betson.interviewTest.core_resources.provider.ResourceProvider
+import com.android.sportsBookApp.core_resources.provider.ResourceProvider
 import javax.inject.Inject
 import androidx.core.content.edit
 

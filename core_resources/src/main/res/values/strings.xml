@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SportsBookApp</string>
+    <string name="no_sport_events">No sport events available</string>
+    <string name="no_sport_favs_msg">There are no favorites events for this sport</string>
+
 </resources>

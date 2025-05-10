@@ -124,23 +124,23 @@ private val LightColors = lightColorScheme(
 
 
 private val DarkColors = darkColorScheme(
-    primary = Color(0xFFFFAB30),          // Orange
-    onPrimary = Color(0xFF000000),        // Black text on orange
+    primary = Color(0xFFFFAB30),
+    onPrimary = Color(0xFF000000),
 
-    secondary = Color(0xFFE7410F),        // Red/orange
-    onSecondary = Color(0xFFFFFFFF),      // White text on red
+    secondary = Color(0xFFE7410F),
+    onSecondary = Color(0xFFFFFFFF),
 
-    tertiary = Color(0xFF0094FF),         // Blue
-    onTertiary = Color(0xFFFFFFFF),       // White on blue
+    tertiary = Color(0xFF0094FF),
+    onTertiary = Color(0xFFFFFFFF),
 
-    background = Color(0xFF343434),       // Dark gray
-    onBackground = Color(0xFFFFFFFF),     // White text
+    background = Color(0xFF343434),
+    onBackground = Color(0xFFFFFFFF),
 
-    surface = Color(0xFF343434),          // Matches background
-    onSurface = Color(0xFFFFFFFF),        // White on surface
+    surface = Color(0xFF343434),
+    onSurface = Color(0xFFFFFFFF),
 
-    surfaceVariant = Color(0xFF000000),   // Deep black for containers
-    onSurfaceVariant = Color(0xFFFFFFFF), // White on black
+    surfaceVariant = Color(0xFF000000),
+    onSurfaceVariant = Color(0xFFFFFFFF),
 )
 
 @Composable

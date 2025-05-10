@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.android.sportsBookApp.core_common.helpers.formatTime
 import kotlinx.coroutines.delay
 
 /**
@@ -56,31 +55,40 @@ fun LifecycleEffect(
 }
 
 @Composable
-fun CountdownTimer(
-    initialSeconds: Int,
-    modifier: Modifier = Modifier
-) {
-    var timeLeft by remember { mutableIntStateOf(initialSeconds) }
+fun CountdownTimer(eventDate: Int) {
+    val targetMillis = remember(eventDate) { eventDate.toLong() * 1000 }
+    var currentTimeMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
-    LaunchedEffect(key1 = Unit) {
-        while (timeLeft > 0) {
+    LaunchedEffect(targetMillis) {
+        while (currentTimeMillis < targetMillis) {
             delay(1000)
-            timeLeft--
+            currentTimeMillis = System.currentTimeMillis()
         }
     }
 
-    val formattedTime = timeLeft.formatTime()
+    val remainingMillis = (targetMillis - currentTimeMillis).coerceAtLeast(0)
+    val formattedTime = formatMillisToHHMMSS(remainingMillis)
 
     Text(
         text = formattedTime,
         fontSize = 12.sp,
         color = Color.White,
         fontWeight = FontWeight.Bold,
-        modifier = modifier
+        modifier = Modifier
             .border(1.dp, MaterialTheme.colorScheme.tertiary, RoundedCornerShape(4.dp))
             .padding(horizontal = 4.dp, vertical = 2.dp)
     )
 }
+
+@Composable
+private fun formatMillisToHHMMSS(millis: Long): String {
+    val totalSeconds = millis / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return "%02d:%02d:%02d".format(hours, minutes, seconds)
+}
+
 
 @Composable
 fun FavoriteIcon(isFavorite: Boolean, eventId: String, toggleFavoriteEvent: (String, Boolean) -> Unit) {

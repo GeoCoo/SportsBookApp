@@ -40,7 +40,7 @@ class SportsInteractorImpl @Inject constructor(
         favoriteEventController.addFavorite(eventId).collect {
             when (it) {
                 is FavoriteEventsControllerPartialState.Success -> emit(
-                    FavoritesPartialState.Success(
+                    Success(
                         it.favoriteEvents
                     )
                 )

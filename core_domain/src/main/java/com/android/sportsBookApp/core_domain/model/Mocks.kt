@@ -1,6 +1,6 @@
 package com.android.sportsBookApp.core_domain.model
 
-fun proviedMockSports(): List<SportsEventsDomain> {
+fun providedMockSports(): List<SportsEventsDomain> {
     return listOf(
         SportsEventsDomain(
             sportName = "Football",

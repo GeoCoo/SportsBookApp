@@ -26,8 +26,20 @@ fun <T> Flow<T>.safeAsync(with: (Throwable) -> (T)): Flow<T> {
 //}
 
  fun Int.formatTime(): String {
-    val h = this / 3600
-    val m = (this % 3600) / 60
-    val s = this % 60
-    return String.format("%02d:%02d:%02d", h, m, s)
+     val h = this / 3600
+     val m = (this % 3600) / 60
+     val s = this % 60
+     return "%02d:%02d:%02d".format(h, m, s)
+ }
+
+     fun String?.splitToPairByDash(): Pair<String, String>? {
+    if (this.isNullOrEmpty()) return null
+
+    val parts = this.split("-")
+    return if (parts.size == 2) {
+        parts[0].trim() to parts[1].trim()
+    } else {
+        null
+    }
 }
+

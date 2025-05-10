@@ -1,8 +1,8 @@
 package com.android.sportsBookApp.core_domain.model
 
+import com.android.sportsBookApp.core_common.helpers.splitToPairByDash
 import com.android.sportsBookApp.core_model.EventDto
 import com.android.sportsBookApp.core_model.SportsEventsDto
-import com.android.sportsBookApp.core_model.splitToPairByDash
 
 data class SportsEventsDomain(
     val sportId: String,

@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sportsBookApp.core_domain.model.EventDomain
 import com.android.sportsBookApp.core_domain.model.SportsEventsDomain
+import com.android.sportsBookApp.core_domain.model.provideMockEvents
+import com.android.sportsBookApp.core_domain.model.providedMockSports
 import com.android.sportsBookApp.core_resources.R
 import com.android.sportsBookApp.core_ui.component.CompetitorsView
 import com.android.sportsBookApp.core_ui.component.CountdownTimer
@@ -72,7 +74,7 @@ fun SportHeader(
     title: String,
     isExpanded: Boolean,
     isEnabled: Boolean,
-    onFavoriteChanged: (Boolean) -> Unit = {},
+    onFavoriteChanged: (Boolean) -> Unit,
     onExpandClick: (Boolean) -> Unit,
     notifyNotEnabled: () -> Unit
 ) {
@@ -217,35 +219,38 @@ fun MainScreenListItem(
     }
 }
 
-//@Preview
-//@Composable
-//fun MainScreenListPreview() {
-//    MainScreenListItem(
-//        sport = proviedMockSports()[0],
-//        isEnabled = true,
-//        expandSportCompetitions = {},
-//        onFavoriteChanged = {},
-//        toggleFavoriteEvent = { _, _ -> }
-//    )
-//}
-//
-//@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
-//@Composable
-//fun MatchCardPreview() {
-//    MatchCard(provideMockEvents()[0], fun(_: String, _: Boolean) {
-//
-//    })
-//}
-//
-//
-//@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
-//@Composable
-//fun SportCompetitionsPreview() {
-//    SportCompetitions(competitions = provideMockEvents(), fun(_: String, _: Boolean) {
-//
-//    })
-//}
-//
+@Preview
+@Composable
+fun MainScreenListPreview() {
+    MainScreenListItem(
+        sport = providedMockSports()[0],
+        isEnabled = true,
+        expandSportCompetitions = {},
+        onFavoriteChanged = {},
+        toggleFavoriteEvent = { _, _ -> },
+        notifyNotEnabled = {}
+    )
+
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
+@Composable
+fun MatchCardPreview() {
+    MatchCard(provideMockEvents()[0], fun(_: String, _: Boolean) {
+
+    })
+}
+
+
+@Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
+@Composable
+fun SportCompetitionsPreview() {
+    SportCompetitions(
+        competitions = provideMockEvents(),
+        toggleFavoriteEvent = { _, _ -> },
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SportHeaderExpandedPreview() {
@@ -257,10 +262,17 @@ fun SportHeaderExpandedPreview() {
         onFavoriteChanged = {},
         notifyNotEnabled = {})
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun SportHeaderNotExpandedPreview() {
-//    SportHeader("Sport", isExpanded = false, isEnabled = false, onExpandClick = {})
-//}
-//
+
+@Preview(showBackground = true)
+@Composable
+fun SportHeaderNotExpandedPreview() {
+    SportHeader(
+        "Sport",
+        isExpanded = false,
+        isEnabled = false,
+        onExpandClick = {},
+        onFavoriteChanged = { },
+        notifyNotEnabled = {}
+    )
+}
+

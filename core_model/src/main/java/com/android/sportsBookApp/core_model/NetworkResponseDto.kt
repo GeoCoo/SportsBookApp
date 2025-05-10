@@ -16,13 +16,3 @@ data class EventDto(
     @SerializedName("tt") var eventStartTime: Int? = null
 )
 
-fun String?.splitToPairByDash(): Pair<String, String>? {
-    if (this.isNullOrEmpty()) return null
-
-    val parts = this.split("-")
-    return if (parts.size == 2) {
-        parts[0].trim() to parts[1].trim()
-    } else {
-        null
-    }
-}

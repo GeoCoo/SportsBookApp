@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+const val FAVORITES = "FAVORITES"
+
 interface FavoriteEventController {
     suspend fun getFavorites(): Flow<FavoriteEventsControllerPartialState>
     suspend fun addFavorite(eventId: String): Flow<FavoriteEventsControllerPartialState>
@@ -18,7 +20,7 @@ class FavoriteEventControllerImpl @Inject constructor(
 ) : FavoriteEventController {
 
     private fun loadFavorites(): MutableList<String> {
-        val json = preferencesController.getString("FAVORITES", "")
+        val json = preferencesController.getString(FAVORITES, "")
         if (json.isEmpty()) {
             return mutableListOf()
         } else {
@@ -29,7 +31,7 @@ class FavoriteEventControllerImpl @Inject constructor(
 
     private fun saveFavorites(favorites: List<String>) {
         val jsonObject = gson.toJson(favorites)
-        preferencesController.setString("FAVORITES", jsonObject)
+        preferencesController.setString(FAVORITES, jsonObject)
     }
 
     override suspend fun getFavorites(): Flow<FavoriteEventsControllerPartialState> = flow {

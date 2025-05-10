@@ -16,8 +16,6 @@ class SportsRepositoryImpl @Inject constructor(private val apiClient: ApiClient)
     SportsRepository {
     override fun getSports(): Flow<SportsResponse> = flow {
         val response = apiClient.retrieveSports()
-        Log.d("SportsRepositoryImpl", "getSports: $response")
-        Log.d("is response success:","getSports: ${response.isSuccessful}")
 
         if (response.isSuccessful) {
             emit(SportsResponse.Success(response.body()))

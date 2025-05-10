@@ -1,15 +1,15 @@
-# SportsBookApp 🏆
+# SportsBookApp
 
 SportsBookApp is a sports listing Android application built with a modular architecture using Jetpack Compose and Kotlin.
 
-## Features ✅
+## Features
 
 - Toggle favorite matches per sport
 - Filter to show only favorite events
 - Countdown timer for each event
 - SharedPreferences storage for favorites
 
-## Modules 📦
+## Modules 
 
 - `core_api`: Network service and api calls
 - `core_common`: Contains common useful functtions and extensions
@@ -20,7 +20,7 @@ SportsBookApp is a sports listing Android application built with a modular archi
 - `core_ui`: Base viewModel and common componens.
 - `feature_main_screen`: Main screen with listing logic
 - `core_resources`: Shared strings, colors, and styles
-- `navigation`: Handles app navigation (if applicable)
+- `navigation`: Handles app navigation
 
 ## Architecture 🏗
 
@@ -31,7 +31,7 @@ This project follows a clean architecture structure and implements MVI with the 
 - **Controller**: Manages SharedPreferences logic for saving/loading favorites.
 - **Mapper**: Maps DTOs to domain models .
 
-## Usage ▶️
+## Usage 
 
 1. Clone the repository:
 

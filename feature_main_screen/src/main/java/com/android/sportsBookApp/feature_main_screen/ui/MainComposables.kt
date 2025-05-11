@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,26 +46,7 @@ import com.android.sportsBookApp.core_domain.model.SportsEventsDomain
 import com.android.sportsBookApp.core_domain.model.provideMockEvents
 import com.android.sportsBookApp.core_domain.model.providedMockSports
 import com.android.sportsBookApp.core_resources.R
-import com.android.sportsBookApp.core_ui.component.CompetitorsView
-import com.android.sportsBookApp.core_ui.component.CountdownTimer
-import com.android.sportsBookApp.core_ui.component.FavoriteIcon
-
-
-@Composable
-fun MatchCard(competition: EventDomain, toggleFavoriteEvent: (String, Boolean) -> Unit) {
-    Column(
-        modifier = Modifier
-            .width(LocalConfiguration.current.screenWidthDp.dp / 2 - 16.dp)
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        CountdownTimer(competition.eventStartTime)
-        FavoriteIcon(competition.isFavorite, competition.eventId, toggleFavoriteEvent)
-        CompetitorsView(competition.competitors)
-    }
-}
+import com.android.sportsBookApp.core_ui.component.MatchCard
 
 
 @Composable
@@ -171,7 +151,8 @@ fun ToggleSwitch(
 @Composable
 fun SportCompetitions(
     competitions: List<EventDomain>,
-    toggleFavoriteEvent: (String, Boolean) -> Unit
+    toggleFavoriteEvent: (String, Boolean) -> Unit,
+    onEventClick: (EventDomain) -> Unit
 ) {
     if (competitions.isNotEmpty())
         FlowRow(
@@ -182,7 +163,7 @@ fun SportCompetitions(
             horizontalArrangement = Arrangement.Start
         ) {
             competitions.forEach { competition ->
-                MatchCard(competition, toggleFavoriteEvent)
+                MatchCard(competition, toggleFavoriteEvent, onEventClick)
             }
         }
     else
@@ -198,7 +179,8 @@ fun MainScreenListItem(
     expandSportCompetitions: (Boolean) -> Unit,
     toggleFavoriteEvent: (String, Boolean) -> Unit,
     onFavoriteChanged: (Boolean) -> Unit,
-    notifyNotEnabled: () -> Unit
+    notifyNotEnabled: () -> Unit,
+    onItemClick: (EventDomain) -> Unit
 ) {
     Column {
         SportHeader(
@@ -214,7 +196,13 @@ fun MainScreenListItem(
             enter = expandVertically() + fadeIn(),
             exit = shrinkVertically() + fadeOut()
         ) {
-            sport.activeEvents?.let { SportCompetitions(competitions = it, toggleFavoriteEvent) }
+            sport.activeEvents?.let {
+                SportCompetitions(
+                    competitions = it,
+                    toggleFavoriteEvent,
+                    onItemClick
+                )
+            }
         }
     }
 }
@@ -228,7 +216,8 @@ fun MainScreenListPreview() {
         expandSportCompetitions = {},
         onFavoriteChanged = {},
         toggleFavoriteEvent = { _, _ -> },
-        notifyNotEnabled = {}
+        notifyNotEnabled = {},
+        onItemClick = { _ -> "" }
     )
 
 }
@@ -236,9 +225,8 @@ fun MainScreenListPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF2D2D2D)
 @Composable
 fun MatchCardPreview() {
-    MatchCard(provideMockEvents()[0], fun(_: String, _: Boolean) {
-
-    })
+    MatchCard(provideMockEvents()[0], { _, _ -> }, onEventClick = { _ -> "" }
+    )
 }
 
 
@@ -248,6 +236,7 @@ fun SportCompetitionsPreview() {
     SportCompetitions(
         competitions = provideMockEvents(),
         toggleFavoriteEvent = { _, _ -> },
+        onEventClick = {_->""}
     )
 }
 

@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.android.sportsBookApp.core_design_system.SportsBookAppTheme
+import com.android.sportsBookApp.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterial3Api
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SportsBookAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    MainNavigation()
+                    AppNavHost()
                 }
             }
         }

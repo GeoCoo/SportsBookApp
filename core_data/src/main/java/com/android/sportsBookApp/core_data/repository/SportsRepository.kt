@@ -1,6 +1,5 @@
 package com.android.sportsBookApp.core_data.repository
 
-import android.util.Log
 import com.android.sportsBookApp.core_api.api.ApiClient
 import com.android.sportsBookApp.core_model.SportsEventsDto
 import kotlinx.coroutines.flow.Flow

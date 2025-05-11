@@ -6,4 +6,5 @@ android {
 
 dependencies {
     implementation project(":core_common")
+    implementation project(":core_domain")
 }

@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.android.sportsBookApp.core_domain.model.EventDomain
+import com.android.sportsBookApp.core_domain.model.SingleEventDomain
 import com.android.sportsBookApp.core_resources.R
 import com.android.sportsBookApp.core_ui.component.LifecycleEffect
 
@@ -30,7 +32,7 @@ import com.android.sportsBookApp.core_ui.component.LifecycleEffect
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(onEventClick: (SingleEventDomain) -> Unit) {
     val viewModel = hiltViewModel<MainViewModel>()
     val state = viewModel.viewState
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -78,7 +80,16 @@ fun MainScreen() {
                         },
                         notifyNotEnabled = {
                             viewModel.setEvent(Event.SetMessage)
-                        })
+                        },
+                        onItemClick = { event ->
+                            onEventClick(
+                                SingleEventDomain(
+                                    sportName = sports[index].sportName,
+                                    event = event
+                                )
+                            )
+                        }
+                    )
 
                 }
             }

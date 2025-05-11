@@ -8,11 +8,11 @@ import com.android.sportsBookApp.core_domain.interactor.SportsInteractor
 import com.android.sportsBookApp.core_domain.interactor.SportsPartialState
 import com.android.sportsBookApp.core_domain.model.SportsEventsDomain
 import com.android.sportsBookApp.core_resources.R
+import com.android.sportsBookApp.core_resources.provider.ResourceProvider
 import com.android.sportsBookApp.core_ui.base.MviViewModel
 import com.android.sportsBookApp.core_ui.base.ViewEvent
 import com.android.sportsBookApp.core_ui.base.ViewSideEffect
 import com.android.sportsBookApp.core_ui.base.ViewState
-import com.android.sportsBookApp.core_resources.provider.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,7 +48,7 @@ sealed class Effect : ViewSideEffect {
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val sportsInteractor: SportsInteractor,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
 ) : MviViewModel<Event, State, Effect>() {
     override fun setInitialState(): State = State(
         isLoading = true,
@@ -209,8 +209,6 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-
-
             is Event.SetMessage -> {
                 setState {
                     copy(
@@ -222,24 +220,23 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun mapEvents(
-        favorites: List<String>?,
-        sports: List<SportsEventsDomain>?
-    ): List<SportsEventsDomain>? = sports?.map { sport ->
-        val updatedActiveEvents = sport.activeEvents?.map { event ->
-            event.copy(isFavorite = event.eventId in (favorites.orEmpty()))
-        }
-
-        val updatedOriginalEvents = sport.originalEvents?.map { event ->
-            event.copy(isFavorite = event.eventId in (favorites.orEmpty()))
-        }
-
-        sport.copy(
-            activeEvents = updatedActiveEvents,
-            originalEvents = updatedOriginalEvents,
-            hasFavorites = updatedActiveEvents?.any { it.isFavorite == true } == true
-        )
-    }
-
 }
 
+private fun mapEvents(
+    favorites: List<String>?,
+    sports: List<SportsEventsDomain>?
+): List<SportsEventsDomain>? = sports?.map { sport ->
+    val updatedActiveEvents = sport.activeEvents?.map { event ->
+        event.copy(isFavorite = event.eventId in (favorites.orEmpty()))
+    }
+
+    val updatedOriginalEvents = sport.originalEvents?.map { event ->
+        event.copy(isFavorite = event.eventId in (favorites.orEmpty()))
+    }
+
+    sport.copy(
+        activeEvents = updatedActiveEvents,
+        originalEvents = updatedOriginalEvents,
+        hasFavorites = updatedActiveEvents?.any { it.isFavorite == true } == true
+    )
+}

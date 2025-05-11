@@ -2,8 +2,12 @@ package com.android.sportsBookApp.core_ui.component
 
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -19,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.android.sportsBookApp.core_domain.model.EventDomain
 import kotlinx.coroutines.delay
 
 /**
@@ -127,3 +134,25 @@ fun CompetitorsView(competitors: Pair<String, String>?) {
         overflow = TextOverflow.Ellipsis
     )
 }
+
+@Composable
+fun MatchCard(
+    competition: EventDomain,
+    toggleFavoriteEvent: (String, Boolean) -> Unit,
+    onEventClick: (EventDomain) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .clickable(onClick = { onEventClick(competition) })
+            .width(LocalConfiguration.current.screenWidthDp.dp / 2 - 16.dp)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        CountdownTimer(competition.eventStartTime)
+        FavoriteIcon(competition.isFavorite, competition.eventId, toggleFavoriteEvent)
+        CompetitorsView(competition.competitors)
+    }
+}
+

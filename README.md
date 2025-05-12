@@ -6,8 +6,10 @@ SportsBookApp is a sports listing Android application built with a modular archi
 
 - Toggle favorite matches per sport
 - Filter to show only favorite events
+- Expand/Collapse every sport
 - Countdown timer for each event
 - SharedPreferences storage for favorites
+- Navigate to single event screen
 
 ## Modules 
 
@@ -21,6 +23,7 @@ SportsBookApp is a sports listing Android application built with a modular archi
 - `feature_main_screen`: Main screen with listing logic
 - `core_resources`: Shared strings, colors, and styles
 - `navigation`: Handles app navigation
+- `core_test`:Cover unit tests
 
 ## Architecture 🏗
 
@@ -29,7 +32,6 @@ This project follows a clean architecture structure and implements MVI with the 
 - **ViewModel**: Handles events, updates state, and emits side-effects.
 - **Interactor**: Bridges repository and controller logic.
 - **Controller**: Manages SharedPreferences logic for saving/loading favorites.
-- **Mapper**: Maps DTOs to domain models .
 
 ## Usage 
 

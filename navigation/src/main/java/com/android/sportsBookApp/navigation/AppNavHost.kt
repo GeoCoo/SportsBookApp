@@ -9,7 +9,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.android.sportsBookApp.core_common.helpers.deserialize
 import com.android.sportsBookApp.core_common.helpers.serialize
-import com.android.sportsBookApp.core_domain.model.EventDomain
 import com.android.sportsBookApp.core_domain.model.SingleEventDomain
 import com.android.sportsBookApp.feature_main_screen.ui.MainScreen
 import com.android.sportsBookApp.feature_single_event.ui.SingleEventScreen

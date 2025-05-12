@@ -2,5 +2,8 @@
     <string name="app_name">SportsBookApp</string>
     <string name="no_sport_events">No sport events available</string>
     <string name="no_sport_favs_msg">There are no favorites events for this sport</string>
+    <string name="vs">VS</string>
+    <string name="no_events">No events found</string>
+    <string name="generic_error_msg">Something went wrong</string>
 
 </resources>

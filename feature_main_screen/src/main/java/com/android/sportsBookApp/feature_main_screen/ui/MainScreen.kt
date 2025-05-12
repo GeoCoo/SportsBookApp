@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.android.sportsBookApp.core_domain.model.EventDomain
 import com.android.sportsBookApp.core_domain.model.SingleEventDomain
 import com.android.sportsBookApp.core_resources.R
 import com.android.sportsBookApp.core_ui.component.LifecycleEffect
@@ -79,7 +78,7 @@ fun MainScreen(onEventClick: (SingleEventDomain) -> Unit) {
                             viewModel.setEvent(Event.HideShowFavorites(sports[index].sportId, it))
                         },
                         notifyNotEnabled = {
-                            viewModel.setEvent(Event.SetMessage)
+                            viewModel.setEvent(Event.ToggleFavoriteEventNotEnabled)
                         },
                         onItemClick = { event ->
                             onEventClick(

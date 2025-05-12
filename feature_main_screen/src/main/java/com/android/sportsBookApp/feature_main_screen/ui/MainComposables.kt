@@ -91,7 +91,7 @@ fun SportHeader(
             IconButton(onClick = { onExpandClick(isExpanded) }) {
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Toggle Expand",
+                    contentDescription = "",
                     tint = MaterialTheme.colorScheme.surfaceVariant
                 )
             }
@@ -139,7 +139,7 @@ fun ToggleSwitch(
         thumbContent = {
             Icon(
                 imageVector = Icons.Default.Star,
-                contentDescription = null,
+                contentDescription = "",
                 modifier = Modifier.size(SwitchDefaults.IconSize),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )

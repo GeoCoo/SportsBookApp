@@ -18,7 +18,7 @@ interface SportsInteractor {
     suspend fun getSports(): Flow<SportsPartialState>
     suspend fun addFavorite(eventId: String): Flow<FavoritesPartialState>
     suspend fun removeFavorite(eventId: String): Flow<FavoritesPartialState>
-    suspend fun getFavorites(): Flow<FavoritesPartialState>
+    suspend fun getFavorites(): Flow<List<String>?>
 }
 
 class SportsInteractorImpl @Inject constructor(
@@ -29,23 +29,31 @@ class SportsInteractorImpl @Inject constructor(
     override suspend fun getSports(): Flow<SportsPartialState> = flow {
         sportsRepository.getSports().collect { response ->
             when (response) {
-                is SportsResponse.Success -> emit(SportsPartialState.Success(response.sports?.map { it.toDomain() }))
-                is SportsResponse.Failed -> emit(SportsPartialState.Failed(response.errorMsg))
+                is SportsResponse.Success -> {
+                    emit(SportsPartialState.Success(response.sports?.map { it.toDomain() }))
+                }
+
+                is SportsResponse.Failed -> {
+                    emit(SportsPartialState.Failed(response.errorMsg))
+                }
+
+                is SportsResponse.NoData -> {
+                    emit(SportsPartialState.NoData(response.msg))
+                }
             }
         }
-
     }
 
     override suspend fun addFavorite(eventId: String) = flow {
         favoriteEventController.addFavorite(eventId).collect {
             when (it) {
-                is FavoriteEventsControllerPartialState.Success -> emit(
-                    Success(
-                        it.favoriteEvents
-                    )
-                )
+                is FavoriteEventsControllerPartialState.Success -> {
+                    emit(Success(it.favoriteEvents))
+                }
 
-                is FavoriteEventsControllerPartialState.Fail -> emit(Failed(it.msg))
+                is FavoriteEventsControllerPartialState.Fail -> {
+                    emit(Failed(it.msg))
+                }
             }
         }
     }
@@ -65,19 +73,9 @@ class SportsInteractorImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFavorites(): Flow<FavoritesPartialState> = flow {
+    override suspend fun getFavorites(): Flow<List<String>?> = flow {
         favoriteEventController.getFavorites().collect {
-            when (it) {
-                is FavoriteEventsControllerPartialState.Success -> emit(
-                    Success(
-                        it.favoriteEvents
-                    )
-                )
-
-                is FavoriteEventsControllerPartialState.Fail -> {
-                    emit(Failed(it.msg))
-                }
-            }
+            emit(it)
         }
     }
 }
@@ -86,6 +84,8 @@ class SportsInteractorImpl @Inject constructor(
 sealed class SportsPartialState {
     data class Success(val sports: List<SportsEventsDomain>?) : SportsPartialState()
     data class Failed(val errorMessage: String) : SportsPartialState()
+    data class NoData(val errorMessage: String) : SportsPartialState()
+
 }
 
 sealed class FavoritesPartialState {

@@ -10,14 +10,14 @@ const val baseUrl = "https://ios-kaizen.github.io/"
 
 interface ApiService {
     @GET("MockSports/sports.json")
-    suspend fun retrieveSports(): Response<List<SportsEventsDto>>
+    suspend fun retrieveSports(): Response<List<SportsEventsDto>?>
 }
 
 interface ApiClient {
-    suspend fun retrieveSports(): Response<List<SportsEventsDto>>
+    suspend fun retrieveSports(): Response<List<SportsEventsDto>?>
 }
 
 class ApiClientImpl @Inject constructor(private val apiService: ApiService) : ApiClient {
-    override suspend fun retrieveSports(): Response<List<SportsEventsDto>> =
+    override suspend fun retrieveSports(): Response<List<SportsEventsDto>?> =
         apiService.retrieveSports()
 }

@@ -35,8 +35,8 @@ class TestSportsInteractor {
     @Spy
     private lateinit var favoriteEventController: FavoriteEventController
 
-    private val mockEventId = "event-123"
-    private val mockFavorites = listOf("event-123", "event-456")
+    private val mockEventId = "eventId"
+    private val mockFavorites = listOf("football_event_id", "basketball_event_id")
 
     @Before
     fun setup() {
@@ -62,6 +62,16 @@ class TestSportsInteractor {
 
             interactor.getSports().runFlowTest {
                 assertEquals("Error", (awaitItem() as SportsPartialState.Failed).errorMessage)
+            }
+        }
+
+    @Test
+    fun `Given NoData from SportsRepository, When getSports called, Then emit SportsPartialState NoData`() =
+        coroutineRule.runTest {
+            Mockito.`when`(sportsRepository.getSports()).thenReturn(flowOf(SportsResponse.NoData("no data")))
+
+            interactor.getSports().runFlowTest {
+                assertEquals(SportsPartialState.NoData("no data"), awaitItem())
             }
         }
 
@@ -110,24 +120,24 @@ class TestSportsInteractor {
         }
 
     @Test
-    fun `Given Success from Controller, When getFavorites called, Then emit FavoritesPartialState Success`() =
+    fun `Given Success from Controller, When getFavorites called, Then emit List of strings`() =
         coroutineRule.runTest {
             Mockito.`when`(favoriteEventController.getFavorites())
-                .thenReturn(flowOf(FavoriteEventsControllerPartialState.Success(mockFavorites)))
+                .thenReturn(flowOf(mockFavorites))
 
             interactor.getFavorites().runFlowTest {
-                assertEquals(FavoritesPartialState.Success(mockFavorites), awaitItem())
+                assertEquals(mockFavorites, awaitItem())
             }
         }
 
     @Test
-    fun `Given Fail from Controller, When getFavorites called, Then emit FavoritesPartialState Failed`() =
+    fun `Given Empty from Controller, When getFavorites called, Then emit empty list`() =
         coroutineRule.runTest {
             Mockito.`when`(favoriteEventController.getFavorites())
-                .thenReturn(flowOf(FavoriteEventsControllerPartialState.Fail("No favorites")))
+                .thenReturn(flowOf(emptyList()))
 
             interactor.getFavorites().runFlowTest {
-                assertEquals(FavoritesPartialState.Failed("No favorites"), awaitItem())
+                assertEquals(emptyList<String>(), awaitItem())
             }
         }
 }

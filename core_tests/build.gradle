@@ -1,11 +1,14 @@
 apply from: "$rootProject.projectDir/common/library-module.gradle"
 apply from: "$rootProject.projectDir/common/dependencies.gradle"
 android {
-    namespace 'com.android.sportsBookApp.core_ui'
+    namespace 'com.android.sportsBookApp.core_tests'
 }
 
 dependencies {
     implementation project(":core_common")
     implementation project(":core_domain")
+    implementation project(":core_data")
+    implementation project(":core_api")
+    implementation project(":core_model")
     implementation project(":core_resources")
 }

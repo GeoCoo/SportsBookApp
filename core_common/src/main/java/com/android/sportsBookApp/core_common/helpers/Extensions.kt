@@ -1,17 +1,9 @@
 package com.android.sportsBookApp.core_common.helpers
 
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-
-fun <T> Flow<T>.safeAsync(with: (Throwable) -> (T)): Flow<T> {
-    return this.flowOn(Dispatchers.IO).catch { emit(with(it)) }
-}
 
 fun String?.splitToPairByDash(): Pair<String, String>? {
     if (this.isNullOrEmpty()) return null
@@ -23,7 +15,6 @@ fun String?.splitToPairByDash(): Pair<String, String>? {
         null
     }
 }
-
 
 inline fun <reified T> T.serialize(gson: Gson): String =
     URLEncoder.encode(gson.toJson(this), StandardCharsets.UTF_8.toString())

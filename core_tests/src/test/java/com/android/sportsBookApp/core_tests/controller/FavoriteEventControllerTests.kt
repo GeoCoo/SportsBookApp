@@ -1,19 +1,22 @@
-package com.android.sportsBookApp.core_tests.controllers
+package com.android.sportsBookApp.core_tests.controller
 
 import com.android.sportsBookApp.core_domain.controller.FAVORITES
 import com.android.sportsBookApp.core_domain.controller.FavoriteEventController
 import com.android.sportsBookApp.core_domain.controller.FavoriteEventControllerImpl
 import com.android.sportsBookApp.core_domain.controller.FavoriteEventsControllerPartialState
 import com.android.sportsBookApp.core_domain.controller.PreferencesController
+import com.android.sportsBookApp.core_resources.R
+import com.android.sportsBookApp.core_resources.provider.ResourceProvider
 import com.android.sportsBookApp.core_tests.CoroutineTestRule
 import com.android.sportsBookApp.core_tests.runFlowTest
 import com.android.sportsBookApp.core_tests.runTest
 import com.google.gson.Gson
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
 
@@ -22,7 +25,7 @@ class TestFavoriteEventController {
     @get:Rule
     val coroutineRule = CoroutineTestRule()
 
-    private lateinit var favoriteEventController: FavoriteEventController
+    private lateinit var controller: FavoriteEventController
 
     @Spy
     private lateinit var preferencesController: PreferencesController
@@ -30,62 +33,101 @@ class TestFavoriteEventController {
     @Spy
     private lateinit var gson: Gson
 
+    @Spy
+    private lateinit var resourceProvider: ResourceProvider
+
     private lateinit var favoriteList: MutableList<String>
     private lateinit var favoriteListJson: String
 
     @Before
     fun before() {
         MockitoAnnotations.openMocks(this)
-        favoriteEventController = FavoriteEventControllerImpl(preferencesController, gson)
-        favoriteList = mutableListOf("event_1", "event_2")
+
+        favoriteList = mutableListOf("football_event_id", "basketball_event_id")
         favoriteListJson = Gson().toJson(favoriteList)
+
+        controller = FavoriteEventControllerImpl(
+            resourceProvider = resourceProvider,
+            preferencesController = preferencesController,
+            gson = gson
+        )
     }
 
     @Test
-    fun `When getFavorites is called and list is not empty then Success is emitted`() =
+    fun `When getFavorites is called and list is not empty, then correct list is emitted`() =
         coroutineRule.runTest {
-            Mockito.`when`(preferencesController.getString(FAVORITES, ""))
-                .thenReturn(favoriteListJson)
+            `when`(preferencesController.getString(FAVORITES, "")).thenReturn(favoriteListJson)
 
-            favoriteEventController.getFavorites().runFlowTest {
-                assertEquals(FavoriteEventsControllerPartialState.Success(favoriteList), awaitItem())
+            controller.getFavorites().runFlowTest {
+                assertEquals(favoriteList, awaitItem())
             }
         }
 
     @Test
-    fun `When getFavorites is called and list is empty then Fail is emitted`() =
+    fun `When getFavorites is called and list is empty, then empty list is emitted`() =
         coroutineRule.runTest {
-            Mockito.`when`(preferencesController.getString(FAVORITES, ""))
-                .thenReturn("")
+            `when`(preferencesController.getString(FAVORITES, "")).thenReturn("")
 
-            favoriteEventController.getFavorites().runFlowTest {
-                assertEquals(FavoriteEventsControllerPartialState.Fail(""), awaitItem())
+            controller.getFavorites().runFlowTest {
+                assertTrue(awaitItem()?.isEmpty() == true)
             }
         }
 
     @Test
-    fun `When addFavorite is called with new id then Success is emitted with updated list`() =
+    fun `When addFavorite is called with new ID, then Success is emitted`() =
         coroutineRule.runTest {
-            Mockito.`when`(preferencesController.getString(FAVORITES, ""))
-                .thenReturn(favoriteListJson)
-            Mockito.`when`(gson.toJson(Mockito.anyList<String>())).thenReturn(favoriteListJson)
+            val newId = "eventId"
+            val expectedList = favoriteList + newId
+            val expectedJson = Gson().toJson(expectedList)
 
-            favoriteEventController.addFavorite("event_3").runFlowTest {
-                val expected = favoriteList.apply { add("event_3") }
-                assertEquals(FavoriteEventsControllerPartialState.Success(expected), awaitItem())
+            `when`(preferencesController.getString(FAVORITES, "")).thenReturn(favoriteListJson)
+            `when`(gson.toJson(anyList<String>())).thenReturn(expectedJson)
+
+            controller.addFavorite(newId).runFlowTest {
+                assertEquals(FavoriteEventsControllerPartialState.Success(expectedList), awaitItem())
             }
         }
 
     @Test
-    fun `When removeFavorite is called with existing id then Success is emitted with updated list`() =
+    fun `When addFavorite is called with existing ID, then Fail is emitted`() =
         coroutineRule.runTest {
-            Mockito.`when`(preferencesController.getString(FAVORITES, ""))
-                .thenReturn(favoriteListJson)
-            Mockito.`when`(gson.toJson(Mockito.anyList<String>())).thenReturn(favoriteListJson)
+            val existingId = "football_event_id"
+            val errorMsg = "Already exists"
 
-            favoriteEventController.removeFavorite("event_1").runFlowTest {
-                val expected = favoriteList.apply { remove("event_1") }
-                assertEquals(FavoriteEventsControllerPartialState.Success(expected), awaitItem())
+            `when`(preferencesController.getString(FAVORITES, "")).thenReturn(favoriteListJson)
+            `when`(resourceProvider.getString(R.string.generic_error_msg)).thenReturn(errorMsg)
+
+            controller.addFavorite(existingId).runFlowTest {
+                assertEquals(FavoriteEventsControllerPartialState.Fail(errorMsg), awaitItem())
+            }
+        }
+
+    @Test
+    fun `When removeFavorite is called with existing ID, then Success is emitted`() =
+        coroutineRule.runTest {
+            val idToRemove = "football_event_id"
+            val expectedList = favoriteList.filter { it != idToRemove }
+            val expectedJson = Gson().toJson(expectedList)
+
+            `when`(preferencesController.getString(FAVORITES, "")).thenReturn(favoriteListJson)
+            `when`(gson.toJson(anyList<String>())).thenReturn(expectedJson)
+
+            controller.removeFavorite(idToRemove).runFlowTest {
+                assertEquals(FavoriteEventsControllerPartialState.Success(expectedList), awaitItem())
+            }
+        }
+
+    @Test
+    fun `When removeFavorite is called with non-existing ID, then Fail is emitted`() =
+        coroutineRule.runTest {
+            val nonExistingId = "eventId"
+            val errorMsg = "Not found"
+
+            `when`(preferencesController.getString(FAVORITES, "")).thenReturn(favoriteListJson)
+            `when`(resourceProvider.getString(R.string.generic_error_msg)).thenReturn(errorMsg)
+
+            controller.removeFavorite(nonExistingId).runFlowTest {
+                assertEquals(FavoriteEventsControllerPartialState.Fail(errorMsg), awaitItem())
             }
         }
 }

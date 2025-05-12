@@ -1,5 +1,7 @@
 package com.android.sportsBookApp.core_domain.controller
 
+import com.android.sportsBookApp.core_resources.R
+import com.android.sportsBookApp.core_resources.provider.ResourceProvider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
@@ -9,12 +11,13 @@ import javax.inject.Inject
 const val FAVORITES = "FAVORITES"
 
 interface FavoriteEventController {
-    suspend fun getFavorites(): Flow<FavoriteEventsControllerPartialState>
+    suspend fun getFavorites(): Flow<List<String>?>
     suspend fun addFavorite(eventId: String): Flow<FavoriteEventsControllerPartialState>
     suspend fun removeFavorite(eventId: String): Flow<FavoriteEventsControllerPartialState>
 }
 
 class FavoriteEventControllerImpl @Inject constructor(
+    private val resourceProvider: ResourceProvider,
     private val preferencesController: PreferencesController,
     private val gson: Gson
 ) : FavoriteEventController {
@@ -34,30 +37,41 @@ class FavoriteEventControllerImpl @Inject constructor(
         preferencesController.setString(FAVORITES, jsonObject)
     }
 
-    override suspend fun getFavorites(): Flow<FavoriteEventsControllerPartialState> = flow {
+    override suspend fun getFavorites(): Flow<List<String>?> = flow {
         val favorites = loadFavorites()
-        when {
-            favorites.isEmpty() -> emit(FavoriteEventsControllerPartialState.Fail(""))
-            else -> emit(FavoriteEventsControllerPartialState.Success(favorites))
-        }
+        emit(favorites)
     }
 
     override suspend fun addFavorite(eventId: String) = flow {
-        emit(updateFavorites { add(eventId) })
+        emit(updateFavorites(
+            validate = { !it.contains(eventId) },
+            modify = { add(eventId) }
+        ))
     }
 
     override suspend fun removeFavorite(eventId: String) = flow {
-        emit(updateFavorites { remove(eventId) })
+        emit(updateFavorites(
+            validate = { it.contains(eventId) },
+            modify = { remove(eventId) }
+        ))
     }
 
+
     private fun updateFavorites(
-        modify: MutableList<String>.() -> Boolean
+        validate: (List<String>) -> Boolean,
+        modify: MutableList<String>.() -> Unit
     ): FavoriteEventsControllerPartialState {
         val favorites = loadFavorites()
-        val changed = favorites.modify()
-        if (changed) saveFavorites(favorites)
-        return FavoriteEventsControllerPartialState.Success(favorites)
+
+        return if (validate(favorites)) {
+            favorites.modify()
+            saveFavorites(favorites)
+            FavoriteEventsControllerPartialState.Success(favorites)
+        } else {
+            FavoriteEventsControllerPartialState.Fail(resourceProvider.getString(R.string.generic_error_msg))
+        }
     }
+
 }
 
 sealed class FavoriteEventsControllerPartialState {

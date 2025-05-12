@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.android.sportsBookApp.core_domain.model.EventDomain
+import com.android.sportsBookApp.core_resources.R
 import kotlinx.coroutines.delay
 
 /**
@@ -102,7 +104,7 @@ fun FavoriteIcon(isFavorite: Boolean, eventId: String, toggleFavoriteEvent: (Str
     IconButton(onClick = { toggleFavoriteEvent(eventId,isFavorite) }) {
         Icon(
             imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
-            contentDescription = "Favorite",
+            contentDescription = "",
             tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.White,
             modifier = Modifier.size(20.dp)
         )
@@ -111,28 +113,32 @@ fun FavoriteIcon(isFavorite: Boolean, eventId: String, toggleFavoriteEvent: (Str
 
 @Composable
 fun CompetitorsView(competitors: Pair<String, String>?) {
-    Text(
-        text = competitors?.first ?: "",
-        color = Color.White,
-        fontSize = 12.sp,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
+    competitors?.first?.let {
+        Text(
+            text = it ,
+            color = Color.White,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 
     Text(
-        text = "vs",
+        text = stringResource(R.string.vs),
         color = Color.Red,
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold
     )
 
-    Text(
-        text = competitors?.second ?: "",
-        color = Color.White,
-        fontSize = 12.sp,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
+    competitors?.second?.let {
+        Text(
+            text = it,
+            color = Color.White,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @Composable
@@ -149,7 +155,6 @@ fun MatchCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         CountdownTimer(competition.eventStartTime)
         FavoriteIcon(competition.isFavorite, competition.eventId, toggleFavoriteEvent)
         CompetitorsView(competition.competitors)

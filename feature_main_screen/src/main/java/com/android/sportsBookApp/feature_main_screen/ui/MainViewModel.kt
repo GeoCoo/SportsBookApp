@@ -22,8 +22,6 @@ data class State(
     val isLoading: Boolean,
     val sportEvents: List<SportsEventsDomain>?,
     val savedFavorites: List<String>?,
-    val errorMessage: String?,
-    val noFavMsg: String = ""
 ) : ViewState
 
 sealed class Event : ViewEvent {
@@ -34,8 +32,8 @@ sealed class Event : ViewEvent {
         val favEvent: Pair<String, Boolean>
     ) : Event()
 
-    object GetSavedFavorites : Event()
-    object SetMessage : Event()
+    data object GetSavedFavorites : Event()
+    data object ToggleFavoriteEventNotEnabled : Event()
     data class HideShowFavorites(val sportId: String?, val toggleFavorites: Boolean) : Event()
 
 }
@@ -54,7 +52,6 @@ class MainViewModel @Inject constructor(
         isLoading = true,
         sportEvents = listOf(),
         savedFavorites = listOf(),
-        errorMessage = null,
     )
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -66,7 +63,24 @@ class MainViewModel @Inject constructor(
                         when (it) {
                             is SportsPartialState.Failed -> {
                                 setState {
-                                    copy(errorMessage = it.errorMessage)
+                                    copy(
+                                        isLoading = false
+                                    )
+                                }
+
+                                setEffect {
+                                    Effect.ShowMessage(it.errorMessage)
+                                }
+                            }
+
+                            is SportsPartialState.NoData -> {
+                                setState {
+                                    copy(
+                                        isLoading = false
+                                    )
+                                }
+                                setEffect {
+                                    Effect.ShowMessage(it.errorMessage)
                                 }
                             }
 
@@ -155,22 +169,14 @@ class MainViewModel @Inject constructor(
             is Event.GetSavedFavorites -> {
                 viewModelScope.launch {
                     sportsInteractor.getFavorites().collect {
-                        when (it) {
-                            is FavoritesPartialState.Failed -> {
-                                setState { copy(errorMessage = it.errorMessage) }
-                            }
-
-                            is FavoritesPartialState.Success -> {
-                                setState {
-                                    copy(
-                                        savedFavorites = it.favorites,
-                                        sportEvents = mapEvents(
-                                            it.favorites,
-                                            viewState.value.sportEvents
-                                        )
-                                    )
-                                }
-                            }
+                        setState {
+                            copy(
+                                savedFavorites = it,
+                                sportEvents = mapEvents(
+                                    it,
+                                    viewState.value.sportEvents
+                                )
+                            )
                         }
                     }
                 }
@@ -190,7 +196,7 @@ class MainViewModel @Inject constructor(
                                 setEffect {
                                     Effect.ShowMessage(resourceProvider.getString(R.string.no_sport_favs_msg))
                                 }
-                                return@map sport // No change
+                                return@map sport
                             }
 
                             sport.copy(
@@ -209,17 +215,11 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-            is Event.SetMessage -> {
-                setState {
-                    copy(
-                        noFavMsg = resourceProvider.getString(R.string.no_sport_favs_msg)
-                    )
-                }
-                setEffect { Effect.ShowMessage(viewState.value.noFavMsg) }
+            is Event.ToggleFavoriteEventNotEnabled -> {
+                setEffect { Effect.ShowMessage(resourceProvider.getString(R.string.no_sport_favs_msg)) }
             }
         }
     }
-
 }
 
 private fun mapEvents(

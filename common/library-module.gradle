@@ -4,11 +4,11 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 25
-        targetSdkVersion 34
+        minSdkVersion 21
+        targetSdk 34
         vectorDrawables {
             useSupportLibrary true
         }
@@ -55,6 +55,4 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-
-
 }

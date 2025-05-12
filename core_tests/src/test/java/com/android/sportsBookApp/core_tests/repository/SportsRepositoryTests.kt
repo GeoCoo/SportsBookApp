@@ -33,6 +33,7 @@ class TestSportsRepositoryImpl {
     private lateinit var apiClient: ApiClient
     @Spy
     private lateinit var resourceProvider: ResourceProvider
+
     private lateinit var repository: SportsRepository
 
     @Before

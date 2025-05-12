@@ -9,7 +9,7 @@ data class SportsEventsDomain(
     val sportName: String?,
     val activeEvents: List<EventDomain>? = listOf(),
     val originalEvents: List<EventDomain>? = listOf(),
-    val isExpanded: Boolean = false,
+    val isExpanded: Boolean = true,
     val hasFavorites: Boolean = false
 )
 

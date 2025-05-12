@@ -18,8 +18,6 @@ import com.android.sportsBookApp.feature_main_screen.ui.Event
 import com.android.sportsBookApp.feature_main_screen.ui.MainViewModel
 import com.android.sportsBookApp.feature_main_screen.ui.State
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before

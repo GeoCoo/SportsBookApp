@@ -26,7 +26,7 @@ SportsBookApp is a sports listing Android application built with a modular archi
 - `navigation`: Handles app navigation
 - `core_test`:Cover unit tests
 
-## Architecture 🏗
+## Architecture
 
 This project follows a clean architecture structure and implements MVI with the following structure:
 

@@ -20,8 +20,8 @@ import javax.inject.Inject
 
 data class State(
     val isLoading: Boolean,
-    val sportEvents: List<SportsEventsDomain>?,
-    val savedFavorites: List<String>?,
+    val sportEvents: List<SportsEventsDomain>? = listOf(),
+    val savedFavorites: List<String>? = listOf(),
 ) : ViewState
 
 sealed class Event : ViewEvent {
@@ -34,7 +34,11 @@ sealed class Event : ViewEvent {
 
     data object GetSavedFavorites : Event()
     data object ToggleFavoriteEventNotEnabled : Event()
-    data class HideShowFavorites(val sportId: String?, val toggleFavorites: Boolean) : Event()
+    data class HideShowFavorites(
+        val sportId: String?,
+        val toggleFavorites: Boolean,
+        val sportEvents: List<SportsEventsDomain>?
+    ) : Event()
 
 }
 
@@ -184,35 +188,21 @@ class MainViewModel @Inject constructor(
 
             is Event.HideShowFavorites -> {
                 viewModelScope.launch {
-                    val updatedSportsList = viewState.value.sportEvents?.map { sport ->
+                    val sports = event.sportEvents.orEmpty()
+                    val updatedList = sports.map { sport ->
                         if (sport.sportId != event.sportId) return@map sport
 
-                        val allEvents = sport.originalEvents ?: sport.activeEvents.orEmpty()
-
-                        if (event.toggleFavorites) {
-                            val favorites = allEvents.filter { it.isFavorite }
-
-                            if (favorites.isEmpty()) {
-                                setEffect {
-                                    Effect.ShowMessage(resourceProvider.getString(R.string.no_sport_favs_msg))
-                                }
-                                return@map sport
-                            }
-
-                            sport.copy(
-                                originalEvents = allEvents,
-                                activeEvents = favorites
-                            )
-                        } else {
-                            sport.copy(
-                                activeEvents = sport.originalEvents ?: sport.activeEvents,
-                                originalEvents = null
-                            )
-                        }
+                        updateSportWithFavoritesToggle(
+                            sport = sport,
+                            toggleFavorites = event.toggleFavorites,
+                            getNoFavoritesMessage = { resourceProvider.getString(R.string.no_sport_favs_msg) },
+                            emitEffect = { setEffect { it } }
+                        ) ?: sport
                     }
 
-                    setState { copy(sportEvents = updatedSportsList) }
+                    setState { copy(sportEvents = updatedList) }
                 }
+
             }
 
             is Event.ToggleFavoriteEventNotEnabled -> {
@@ -239,4 +229,35 @@ private fun mapEvents(
         originalEvents = updatedOriginalEvents,
         hasFavorites = updatedActiveEvents?.any { it.isFavorite == true } == true
     )
+}
+
+private fun updateSportWithFavoritesToggle(
+    sport: SportsEventsDomain,
+    toggleFavorites: Boolean,
+    getNoFavoritesMessage: () -> String,
+    emitEffect: (Effect) -> Unit
+): SportsEventsDomain? {
+    val allEvents = sport.originalEvents ?: sport.activeEvents.orEmpty()
+
+    return if (toggleFavorites) {
+        val favorites = allEvents.filter { it.isFavorite }
+
+        if (favorites.isEmpty()) {
+            emitEffect(Effect.ShowMessage(getNoFavoritesMessage()))
+            return null
+        }
+
+        sport.copy(
+            originalEvents = allEvents,
+            activeEvents = favorites,
+            hasFavorites = true
+        )
+    } else {
+        sport.copy(
+            activeEvents = sport.originalEvents ?: sport.activeEvents,
+            originalEvents = null,
+            hasFavorites = false
+        )
+    }
+
 }

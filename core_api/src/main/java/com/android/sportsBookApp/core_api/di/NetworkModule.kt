@@ -16,9 +16,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
-    /**
-     * Constructs and provides a singleton [Retrofit] instance used to perform api calls.
-     */
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -30,21 +27,10 @@ class NetworkModule {
         .client(okHttpClient)
         .build()
 
-
-    /**
-     * Constructs and provides a singleton [OkHttpClient] used for [Retrofit] instance
-     * initialization.
-     *
-     * @return A [OkHttpClient] instance.
-     */
     @Singleton
     @Provides
-    fun provideOkHttpClient(
-        httpLoggingInterceptor: HttpLoggingInterceptor,
-    ): OkHttpClient {
-
+    fun provideOkHttpClient(): OkHttpClient {
         val client = OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
             .readTimeout(3000, TimeUnit.MILLISECONDS)
             .connectTimeout(3000, TimeUnit.MILLISECONDS)
             .writeTimeout(3000, TimeUnit.MILLISECONDS)
@@ -55,19 +41,4 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
-
-    /** Constructs and provides a singleton [HttpLoggingInterceptor] instance.
-     *
-     * @return A [HttpLoggingInterceptor] instance.
-     */
-    @Singleton
-    @Provides
-    fun providesHttpLoggingInterceptor(
-    ) = HttpLoggingInterceptor()
-        .apply {
-            level = HttpLoggingInterceptor.Level.BODY
-
-        }
-
-
 }

@@ -75,7 +75,7 @@ fun MainScreen(onEventClick: (SingleEventDomain) -> Unit) {
                             viewModel.setEvent(Event.ToggleFavoriteEvent(sports[index], favEvent))
                         },
                         onFavoriteChanged = {
-                            viewModel.setEvent(Event.HideShowFavorites(sports[index].sportId, it))
+                            viewModel.setEvent(Event.HideShowFavorites(sports[index].sportId, it,state.value.sportEvents))
                         },
                         notifyNotEnabled = {
                             viewModel.setEvent(Event.ToggleFavoriteEventNotEnabled)

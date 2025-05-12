@@ -12,6 +12,7 @@ import com.android.sportsBookApp.core_model.SportsEventsDto
 import com.android.sportsBookApp.core_tests.CoroutineTestRule
 import com.android.sportsBookApp.core_tests.runFlowTest
 import com.android.sportsBookApp.core_tests.runTest
+import com.android.sportsBookApp.core_tests.toFlow
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.flowOf
@@ -48,7 +49,8 @@ class TestSportsInteractor {
     fun `Given Success from SportsRepository, When getSports called, Then emit SportsPartialState Success`() =
         coroutineRule.runTest {
             val mockDto = SportsEventsDto(sportId = "1")
-            Mockito.`when`(sportsRepository.getSports()).thenReturn(flowOf(SportsResponse.Success(listOf(mockDto))))
+            val response = SportsResponse.Success(listOf(mockDto))
+            Mockito.`when`(sportsRepository.getSports()).thenReturn(response.toFlow())
 
             interactor.getSports().runFlowTest {
                 assertTrue(awaitItem() is SportsPartialState.Success)
@@ -58,7 +60,8 @@ class TestSportsInteractor {
     @Test
     fun `Given Failed from SportsRepository, When getSports called, Then emit SportsPartialState Failed`() =
         coroutineRule.runTest {
-            Mockito.`when`(sportsRepository.getSports()).thenReturn(flowOf(SportsResponse.Failed("Error")))
+            val response = SportsResponse.Failed("Error")
+            Mockito.`when`(sportsRepository.getSports()).thenReturn(response.toFlow())
 
             interactor.getSports().runFlowTest {
                 assertEquals("Error", (awaitItem() as SportsPartialState.Failed).errorMessage)
@@ -68,7 +71,8 @@ class TestSportsInteractor {
     @Test
     fun `Given NoData from SportsRepository, When getSports called, Then emit SportsPartialState NoData`() =
         coroutineRule.runTest {
-            Mockito.`when`(sportsRepository.getSports()).thenReturn(flowOf(SportsResponse.NoData("no data")))
+            val response = SportsResponse.NoData("no data")
+            Mockito.`when`(sportsRepository.getSports()).thenReturn(response.toFlow())
 
             interactor.getSports().runFlowTest {
                 assertEquals(SportsPartialState.NoData("no data"), awaitItem())
@@ -78,8 +82,9 @@ class TestSportsInteractor {
     @Test
     fun `Given Success from Controller, When addFavorite called, Then emit FavoritesPartialState Success`() =
         coroutineRule.runTest {
+            val response = FavoriteEventsControllerPartialState.Success(mockFavorites)
             Mockito.`when`(favoriteEventController.addFavorite(mockEventId))
-                .thenReturn(flowOf(FavoriteEventsControllerPartialState.Success(mockFavorites)))
+                .thenReturn(response.toFlow())
 
             interactor.addFavorite(mockEventId).runFlowTest {
                 assertEquals(FavoritesPartialState.Success(mockFavorites), awaitItem())
@@ -89,8 +94,9 @@ class TestSportsInteractor {
     @Test
     fun `Given Fail from Controller, When addFavorite called, Then emit FavoritesPartialState Failed`() =
         coroutineRule.runTest {
+            val response = FavoriteEventsControllerPartialState.Fail("Add failed")
             Mockito.`when`(favoriteEventController.addFavorite(mockEventId))
-                .thenReturn(flowOf(FavoriteEventsControllerPartialState.Fail("Add failed")))
+                .thenReturn(response.toFlow())
 
             interactor.addFavorite(mockEventId).runFlowTest {
                 assertEquals(FavoritesPartialState.Failed("Add failed"), awaitItem())
@@ -100,8 +106,9 @@ class TestSportsInteractor {
     @Test
     fun `Given Success from Controller, When removeFavorite called, Then emit FavoritesPartialState Success`() =
         coroutineRule.runTest {
+            val response = FavoriteEventsControllerPartialState.Success(mockFavorites)
             Mockito.`when`(favoriteEventController.removeFavorite(mockEventId))
-                .thenReturn(flowOf(FavoriteEventsControllerPartialState.Success(mockFavorites)))
+                .thenReturn(response.toFlow())
 
             interactor.removeFavorite(mockEventId).runFlowTest {
                 assertEquals(FavoritesPartialState.Success(mockFavorites), awaitItem())
@@ -111,8 +118,9 @@ class TestSportsInteractor {
     @Test
     fun `Given Fail from Controller, When removeFavorite called, Then emit FavoritesPartialState Failed`() =
         coroutineRule.runTest {
+            val response  = FavoriteEventsControllerPartialState.Fail("Remove failed")
             Mockito.`when`(favoriteEventController.removeFavorite(mockEventId))
-                .thenReturn(flowOf(FavoriteEventsControllerPartialState.Fail("Remove failed")))
+                .thenReturn(response.toFlow())
 
             interactor.removeFavorite(mockEventId).runFlowTest {
                 assertEquals(FavoritesPartialState.Failed("Remove failed"), awaitItem())
@@ -123,7 +131,7 @@ class TestSportsInteractor {
     fun `Given Success from Controller, When getFavorites called, Then emit List of strings`() =
         coroutineRule.runTest {
             Mockito.`when`(favoriteEventController.getFavorites())
-                .thenReturn(flowOf(mockFavorites))
+                .thenReturn(mockFavorites.toFlow())
 
             interactor.getFavorites().runFlowTest {
                 assertEquals(mockFavorites, awaitItem())

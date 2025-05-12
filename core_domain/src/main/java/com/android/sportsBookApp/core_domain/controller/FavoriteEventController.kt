@@ -71,7 +71,6 @@ class FavoriteEventControllerImpl @Inject constructor(
             FavoriteEventsControllerPartialState.Fail(resourceProvider.getString(R.string.generic_error_msg))
         }
     }
-
 }
 
 sealed class FavoriteEventsControllerPartialState {

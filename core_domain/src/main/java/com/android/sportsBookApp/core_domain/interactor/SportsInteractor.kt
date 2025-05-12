@@ -68,7 +68,6 @@ class SportsInteractorImpl @Inject constructor(
                 is FavoriteEventsControllerPartialState.Success -> {
                     emit(Success(it.favoriteEvents))
                 }
-
             }
         }
     }
@@ -85,7 +84,6 @@ sealed class SportsPartialState {
     data class Success(val sports: List<SportsEventsDomain>?) : SportsPartialState()
     data class Failed(val errorMessage: String) : SportsPartialState()
     data class NoData(val errorMessage: String) : SportsPartialState()
-
 }
 
 sealed class FavoritesPartialState {

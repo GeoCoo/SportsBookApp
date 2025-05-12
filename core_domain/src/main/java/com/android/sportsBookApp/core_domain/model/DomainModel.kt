@@ -13,7 +13,6 @@ data class SportsEventsDomain(
     val hasFavorites: Boolean = false
 )
 
-
 data class EventDomain(
     var eventName: String,
     var eventId: String,

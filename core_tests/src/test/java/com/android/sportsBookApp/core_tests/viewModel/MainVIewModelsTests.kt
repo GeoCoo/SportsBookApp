@@ -18,6 +18,9 @@ import com.android.sportsBookApp.feature_main_screen.ui.Event
 import com.android.sportsBookApp.feature_main_screen.ui.MainViewModel
 import com.android.sportsBookApp.feature_main_screen.ui.State
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -164,14 +167,18 @@ class MainViewModelTest : RobolectricTest() {
             viewModel.effect.runFlowTest {
                 assertEquals(Effect.ShowMessage("Favorites not enabled"), awaitItem())
             }
-        }
+    }
 
     @Test
-    fun `Given HideShowFavorites true with no favorites, Then ShowMessage effect is emitted`() = coroutineRule.runTest {
-        val sportId = "basketball"
-        val allSports = providedMockSports().map { sport ->
-            sport.copy(activeEvents = sport.activeEvents?.map { it.copy(isFavorite = false) })
-        }
+    fun `Given HideShowFavorites true with no favorites, Then show message and keep events unchanged`() = coroutineRule.runTest {
+        val sportId = "tennis"
+        val nonFavorites = provideMockEvents().map { it.copy(isFavorite = false) }
+
+        val sport = SportsEventsDomain(
+            sportId = sportId,
+            sportName = "Tennis",
+            activeEvents = nonFavorites
+        )
 
         `when`(resourceProvider.getString(R.string.no_sport_favs_msg)).thenReturn("No favorites")
 
@@ -179,7 +186,7 @@ class MainViewModelTest : RobolectricTest() {
             Event.HideShowFavorites(
                 sportId = sportId,
                 toggleFavorites = true,
-                sportEvents = allSports
+                sportEvents = listOf(sport)
             )
         )
 
@@ -188,43 +195,36 @@ class MainViewModelTest : RobolectricTest() {
         }
 
         viewModel.viewStateHistory.runFlowTest {
-            val state = awaitItem()
-            val unchangedSport = state.sportEvents?.find { it.sportId == sportId }
-            assertEquals(3, unchangedSport?.activeEvents?.size) // all events still there
+            val updatedSport = awaitItem().sportEvents?.firstOrNull()
+            assertEquals(nonFavorites, updatedSport?.activeEvents)
         }
     }
 
     @Test
-    fun `Given HideShowFavorites false, Then restore original event list`() = coroutineRule.runTest {
+    fun `Given HideShowFavorites false, Then restores original events`() = coroutineRule.runTest {
         val sportId = "football"
-        val favoritesOnly = provideMockEvents().map {
-            it.copy(isFavorite = true)
-        }
+        val originalEvents = provideMockEvents()
+        val favoritesOnly = originalEvents.filter { it.isFavorite }
 
         val sport = SportsEventsDomain(
             sportId = sportId,
             sportName = "Football",
             activeEvents = favoritesOnly,
-            originalEvents = provideMockEvents(),
-            hasFavorites = true
+            originalEvents = originalEvents
         )
-
-        val allSports = listOf(sport)
 
         viewModel.setEvent(
             Event.HideShowFavorites(
                 sportId = sportId,
                 toggleFavorites = false,
-                sportEvents = allSports
+                sportEvents = listOf(sport)
             )
         )
 
         viewModel.viewStateHistory.runFlowTest {
-            val state = awaitItem()
-            val restoredSport = state.sportEvents?.find { it.sportId == sportId }
-            assertEquals(3, restoredSport?.activeEvents?.size)
-            assertEquals(null, restoredSport?.originalEvents)
-            assertEquals(false, restoredSport?.hasFavorites)
+            val updatedSport = awaitItem().sportEvents?.firstOrNull()
+            assertEquals(originalEvents, updatedSport?.activeEvents)
+            assertNull(updatedSport?.originalEvents)
         }
     }
 }

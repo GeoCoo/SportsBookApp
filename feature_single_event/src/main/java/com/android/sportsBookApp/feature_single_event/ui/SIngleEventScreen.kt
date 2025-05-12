@@ -1,6 +1,5 @@
 package com.android.sportsBookApp.feature_single_event.ui
 
-
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,11 +40,6 @@ fun SingleEventScreen(event: SingleEventDomain,navController:NavController) {
         viewModel.setEvent(Event.HandleEvent(event))
     }
 
-    LifecycleEffect(
-        lifecycleOwner = lifecycleOwner, lifecycleEvent = Lifecycle.Event.ON_RESUME
-    ) {
-    }
-
     Scaffold(topBar = {
         TopAppBar(
             navigationIcon =
@@ -73,5 +67,4 @@ fun SingleEventScreen(event: SingleEventDomain,navController:NavController) {
 
         }
     }
-
 }

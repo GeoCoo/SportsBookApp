@@ -47,7 +47,5 @@ class SingleEventVIewModel @Inject constructor() : MviViewModel<Event, State, Ef
                 }
             }
         }
-
     }
-
 }

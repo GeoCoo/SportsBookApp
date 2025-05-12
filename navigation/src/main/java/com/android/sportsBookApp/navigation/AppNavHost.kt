@@ -14,7 +14,6 @@ import com.android.sportsBookApp.feature_main_screen.ui.MainScreen
 import com.android.sportsBookApp.feature_single_event.ui.SingleEventScreen
 import com.google.gson.Gson
 
-
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
     NavHost(

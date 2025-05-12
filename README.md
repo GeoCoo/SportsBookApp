@@ -21,6 +21,7 @@ SportsBookApp is a sports listing Android application built with a modular archi
 - `core_model`: Network response models
 - `core_ui`: Base viewModel and common componens.
 - `feature_main_screen`: Main screen with listing logic
+- `feature_single_event_screen`:Single event screen 
 - `core_resources`: Shared strings, colors, and styles
 - `navigation`: Handles app navigation
 - `core_test`:Cover unit tests
